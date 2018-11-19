@@ -5,15 +5,20 @@
   
 
   
-  <title>Sakya Personal Blog</title>
+  <title>大规模multi-task learning学习通用句子表达(general purpose distributed sentence representation) | Sakya Personal Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Sakya Personal Blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="一、Paper TitleLearning General Purpose Distributed Sentence Representations via large scale multi-task Learning[ICLR2018]Yoshua Bengio挂名，主要机构MILA是蒙特利尔大学  二、Brief IntroductionMotivation1.这篇文章受Transfer L">
+<meta name="keywords" content="paper">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大规模multi-task learning学习通用句子表达(general purpose distributed sentence representation)">
+<meta property="og:url" content="http://yoursite.com/2018/11/19/learn-general-sentence-representations/index.html">
 <meta property="og:site_name" content="Sakya Personal Blog">
+<meta property="og:description" content="一、Paper TitleLearning General Purpose Distributed Sentence Representations via large scale multi-task Learning[ICLR2018]Yoshua Bengio挂名，主要机构MILA是蒙特利尔大学  二、Brief IntroductionMotivation1.这篇文章受Transfer L">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-11-19T13:06:25.923Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Sakya Personal Blog">
+<meta name="twitter:title" content="大规模multi-task learning学习通用句子表达(general purpose distributed sentence representation)">
+<meta name="twitter:description" content="一、Paper TitleLearning General Purpose Distributed Sentence Representations via large scale multi-task Learning[ICLR2018]Yoshua Bengio挂名，主要机构MILA是蒙特利尔大学  二、Brief IntroductionMotivation1.这篇文章受Transfer L">
   
     <link rel="alternate" href="/atom.xml" title="Sakya Personal Blog" type="application/atom+xml">
   
@@ -60,9 +65,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-learn-general-sentence-representations" class="article article-type-post" itemscope="" itemprop="blogPost">
+        <section id="main"><article id="post-learn-general-sentence-representations" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/11/19/learn-general-sentence-representations/" class="article-date">
   <time datetime="2018-11-19T08:46:20.000Z" itemprop="datePublished">2018-11-19</time>
@@ -75,8 +78,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/19/learn-general-sentence-representations/">大规模multi-task learning学习通用句子表达(general purpose distributed sentence representation)</a>
+    <h1 class="article-title" itemprop="name">
+      大规模multi-task learning学习通用句子表达(general purpose distributed sentence representation)
     </h1>
   
 
@@ -110,161 +113,19 @@
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-semantic-matching-Toturial" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/11/14/semantic-matching-Toturial/" class="article-date">
-  <time datetime="2018-11-14T12:10:46.000Z" itemprop="datePublished">2018-11-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/14/semantic-matching-Toturial/">semantic_matching_Toturial</a>
-    </h1>
+    <a href="/2018/11/14/semantic-matching-Toturial/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">semantic_matching_Toturial</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Task描述："><a href="#Task描述：" class="headerlink" title="Task描述："></a>Task描述：</h2><p>自然语言处理中语义匹配是一个核心问题，该技术经常被用于信息检索、阅读理解，问答系统等等。<br>input就是两个sentence，数据就是两句话的matching score，可以视为分类或者排序的任务。</p>
-<ul>
-<li>类似问题<br>semantic textual similarity(STS)<br>paraphrase identification<br>natural language inference(NLI)<br>recognizing textual entailment(RTE)</li>
-</ul>
-<p>本文主要关注的是基于深度学习的方法，其他的传统的方法不在讨论范围<br>深度学习算法做语义匹配主要分为两大类：<br>1）representation based model：DSSM，CDSSM，ARC-I，CNTN<br>2）interaction based model：ARC-II，MatchingPyramid，DRMM，MIX<br>其中涉及到的模型后续有空的话会补上相关论文的解读，这里只是简单的举一些典型的例子，相关模型其实很多，就不再一一列举。<br>其实基于表示和交互的方法有时候并没有严格的分界线，绝大多数只是侧重的部分不同，比如基于表示的方法就是represent block is more complex than interaction matrix computation</p>
-<h3 id="Link"><a href="#Link" class="headerlink" title="Link"></a>Link</h3><ul>
-<li><a href="https://www.comp.nus.edu.sg/~xiangnan/papers/www18-tutorial-deep-matching.pdf" target="_blank" rel="noopener">WWW2018 Tutorial</a></li>
-<li><a href="http://nn4ir.com/wsdm2018/slides/04_SemanticMatching.pdf" target="_blank" rel="noopener">WSDM2018 Tutorial</a></li>
-</ul>
-<h3 id="Public-Dataset"><a href="#Public-Dataset" class="headerlink" title="Public Dataset"></a>Public Dataset</h3><ul>
-<li><a href="https://data.quora.com/First-Quora-Dataset-Release-Question-Pairs" target="_blank" rel="noopener">Quora question pairs</a></li>
-<li><a href="https://nlp.stanford.edu/projects/snli/" target="_blank" rel="noopener">SNLI</a></li>
-<li><a href="http://alt.qcri.org/semeval2017/task1/" target="_blank" rel="noopener">SemEval-2017 Task 1</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/11/14/semantic-matching-Toturial/" data-id="cjoo89rzc000421ajr3t56wuu" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/share/">share</a></li></ul>
-
-    </footer>
-  </div>
   
 </article>
-
-
-  
-    <article id="post-environment" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/11/14/environment/" class="article-date">
-  <time datetime="2018-11-14T03:26:46.000Z" itemprop="datePublished">2018-11-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/14/environment/">必备环境配置</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="Basic"><a href="#Basic" class="headerlink" title="Basic"></a>Basic</h3><p>需要的基本环境如下：<br>Python:2.7<br>Numpy<br>Tensorflow &gt;= 1.8.0</p>
-<h3 id="Download"><a href="#Download" class="headerlink" title="Download"></a>Download</h3><p>常用的下载路径:<br><a href="https://www.anaconda.com/download/#macos" target="_blank" rel="noopener">anaconda</a><br><a href="https://mirrors.tuna.tsinghua.edu.cn/" target="_blank" rel="noopener">清华镜像站</a></p>
-<h3 id="Command"><a href="#Command" class="headerlink" title="Command"></a>Command</h3><p>安装完anaconda之后，首先新建一个虚拟环境,然后在新的环境中安装包：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">conda create -n your_env_name python=X.X (2.7/3.6)</span><br><span class="line"><span class="built_in">source</span> activate your_env_name</span><br><span class="line">conda install package_name</span><br><span class="line">pip install tensorflow==1.8</span><br></pre></td></tr></table></figure></p>
-<h4 id="Others"><a href="#Others" class="headerlink" title="Others"></a>Others</h4><p>查看已有环境<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda env list</span><br></pre></td></tr></table></figure></p>
-<p>or<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda info -e</span><br></pre></td></tr></table></figure></p>
-<p>查看当前环境安装的包<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda list</span><br></pre></td></tr></table></figure></p>
-<p>创建新虚拟环境同时安装必要的包<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install -n your_env_name [package]</span><br></pre></td></tr></table></figure></p>
-<p>删除环境<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda remove -n your_env_name</span><br></pre></td></tr></table></figure></p>
-<p>删除环境中的某个包<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda remove --name <span class="variable">$your_env_name</span>  <span class="variable">$package_name</span></span><br></pre></td></tr></table></figure></p>
-<p>退出当前环境<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> deactivate</span><br></pre></td></tr></table></figure></p>
-<p>设置国内镜像<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加Anaconda的TUNA镜像</span></span><br><span class="line">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置搜索时显示通道地址</span></span><br><span class="line">conda config --<span class="built_in">set</span> show_channel_urls yes</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/11/14/environment/" data-id="cjoo89rz2000021ajfrzw0rrt" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/practice/">practice</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/11/12/hello-world/" class="article-date">
-  <time datetime="2018-11-12T13:13:15.937Z" itemprop="datePublished">2018-11-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/12/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>这是我的个人博客，从现在起不定期更新一些个人工作中的一些技术感悟，更多的是想自我沉淀，不定期更新，涉及到的领域主要如下：</p>
-<h3 id="NLP算法"><a href="#NLP算法" class="headerlink" title="NLP算法"></a>NLP算法</h3><ul>
-<li><p>论文阅读 </p>
-<p>tag:nlp paper</p>
-</li>
-<li><p>模型复现的核心代码 </p>
-<p>tag:nlp code</p>
-</li>
-</ul>
-<h3 id="开发技巧和解决的问题备份"><a href="#开发技巧和解决的问题备份" class="headerlink" title="开发技巧和解决的问题备份"></a>开发技巧和解决的问题备份</h3><p>tag:practice</p>
-<h3 id="平日学习的课程或者书籍笔记"><a href="#平日学习的课程或者书籍笔记" class="headerlink" title="平日学习的课程或者书籍笔记"></a>平日学习的课程或者书籍笔记</h3><p>tag:curriculum</p>
-<h3 id="其他各种有用或者有意思的算法，不局限在Deep-Learning"><a href="#其他各种有用或者有意思的算法，不局限在Deep-Learning" class="headerlink" title="其他各种有用或者有意思的算法，不局限在Deep Learning"></a>其他各种有用或者有意思的算法，不局限在Deep Learning</h3><p>tag:algorithm</p>
-<h3 id="好资源分享"><a href="#好资源分享" class="headerlink" title="好资源分享"></a>好资源分享</h3><p>tag:share</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/11/12/hello-world/" data-id="cjoo89rz7000121ajjcmiwu5y" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-
 
 </section>
         
