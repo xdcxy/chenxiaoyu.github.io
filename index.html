@@ -87,10 +87,10 @@
         <h1 id="一、Paper-Title"><a href="#一、Paper-Title" class="headerlink" title="一、Paper Title"></a>一、Paper Title</h1><p>Learning General Purpose Distributed Sentence Representations via large scale multi-task Learning[ICLR2018]<br>Yoshua Bengio挂名，主要机构MILA是蒙特利尔大学 </p>
 <h1 id="二、Brief-Introduction"><a href="#二、Brief-Introduction" class="headerlink" title="二、Brief Introduction"></a>二、Brief Introduction</h1><h2 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h2><p>1.这篇文章受Transfer Learning在NLP和CV中的成功启发。在例如image captioning和visual question answering任务中，经常在ImageNet上使用预训练得到的CNN去提取图片的表示。NLP中则用预训练的词向量。<br>2.虽然word embedding经常被用来初始化NLP的模型，但是word in context的学习却往往从头开始。这在大部分情况下是不可行的，特别是数据量较少的情况，不能很好地进行监督学习。于是本文的期望是有一个general purpose sentence representations可以对很多任务有所帮助，从而不需要仅仅实用了词向量，其他上下文的表示都要从头再学。<br>3.要在representation learning中有所进展，需要理解不同的网络模型建模的结果产生的inductive biases是什么样的，比如NMT模型被证明主要抓取形态学(morphology)和句法(syntactic)的属性。<br>4.要在diverse的任务中generalize,那么对句子从不同角度进行编码是十分重要的。利用不同模型方法(skip-thoughts,machine translation,natural language inference,constituency parsing)会得到不同inductive biases。</p>
 <h2 id="Main-Methology"><a href="#Main-Methology" class="headerlink" title="Main Methology"></a>Main Methology</h2><p>1.采用one-to-many multi-task learning framework,其中encoder模块在不同任务中是共享的。这个框架设计基于的假设是从大量没什么关联的NLP任务中学习的句子表示更具普适性，能够更好地处理没有见过的任务，since this process encodes the inductive biases of multiple models。<br>2.目标是得到fixed-length distributed sentence representations。</p>
-<h2 id="Experimental-Results"><a href="#Experimental-Results" class="headerlink" title="Experimental Results"></a>Experimental Results</h2><p>这篇文章主要从三个角度衡量了模型的效果，这三个角度都是参考的以下论文：《Skip-thought vectors》、《Learning distributed representations of sentences from unlabelled data》、《Supervised learning of universal sentence representations from natural language inference data》<br>1.将学习到的通用的句子表示用于没参与训练的文本分类任务的简单分类器的feature<br>下面的图列出了10个分类任务上模型的效果， 这篇paper使用的是简单逻辑回归加上通用句子表示，主要对比的对象是Infersent，最后一列都列出了相对于这个baseline的平均提升。整体上task越多效果越好。<br><img src="/Users/apple/Desktop/临时图片/sr_pic1.png" alt="pic1"><br>其中(MR, CR, SUBJ &amp; MPQA)这四个是情感分类任务，相对提升在1.1%至2%，TREC上提升较大，相比于infersent 6%，CNN-LSTM 2%<br>2.这种transfer learning的方法在low-resource的任务中表现如何</p>
-<p>下面这个图所示的是在通用句子表示的基础上加上一个MLP就能够比肩甚至超过很多运用attention机制的复杂模型。而且有个很重要的点是所用的数据占训练集很小的比例就可以达到不错的效果。<br><img src="/Users/apple/Desktop/临时图片/sr_pic2.png" alt="pic2"><br>3.评估这个框架学习到的word embedding效果如何。词向量的评价标准参考论文：《Community evaluation and exchange of word vectors at wordvectors》、《Evaluation of word vector representations by subspace alignment》<br>这个图展示的就是multi-task learning 学习到的词向量在标准的评价指标里是可以与Glove，Word2vec，fasttext等相提并论的。<br><img src="/Users/apple/Desktop/临时图片/sr_pic3.png" alt="pic3"></p>
-<p>另外地，作者深入研究了这些句子embedding有没有像这两篇参考论文《Fine-grained analysis<br>of sentence embeddings using auxiliary prediction tasks》、《Does string-based neural mt learn source syntax?》提到的可以infer一些sentence characteristics和syntactic properties。实验发现句法属性通过增加multi-lingual NMT来更好的encode。仅从NLI任务学习表示可以encode syntax但是融入到multi-task的框架里没有增强这一信号。类似地，作者发现诸如长度，单词顺序这些sentence characteristics可以通过加入parsing更好地encode。实验见下图：<br><img src="/Users/apple/Desktop/临时图片/sr_pic5.jpg" alt="pic4"></p>
-<p>这篇文章参考skip-thought里面的方式对句子表示做了个可视化，应用t-SNE技术进行投影，效果如下：<br><img src="/Users/apple/Desktop/临时图片/sr_pic4.png" alt="pic5"><br>在image-caption retrieval任务中，这篇文章的sentence embedding是超过skip-thoughts,并且能和Infersent差不多的。直接计算两个句子embedding的余弦相似度可以不错地衡量他们的semantic textual similarity。</p>
+<h2 id="Experimental-Results"><a href="#Experimental-Results" class="headerlink" title="Experimental Results"></a>Experimental Results</h2><p>这篇文章主要从三个角度衡量了模型的效果，这三个角度都是参考的以下论文：《Skip-thought vectors》、《Learning distributed representations of sentences from unlabelled data》、《Supervised learning of universal sentence representations from natural language inference data》<br>1.将学习到的通用的句子表示用于没参与训练的文本分类任务的简单分类器的feature<br>下面的图列出了10个分类任务上模型的效果， 这篇paper使用的是简单逻辑回归加上通用句子表示，主要对比的对象是Infersent，最后一列都列出了相对于这个baseline的平均提升。整体上task越多效果越好。<br><img src="http://piiuo16g4.bkt.clouddn.com/sr_pic1.png" alt="pic1"><br>其中(MR, CR, SUBJ &amp; MPQA)这四个是情感分类任务，相对提升在1.1%至2%，TREC上提升较大，相比于infersent 6%，CNN-LSTM 2%<br>2.这种transfer learning的方法在low-resource的任务中表现如何</p>
+<p>下面这个图所示的是在通用句子表示的基础上加上一个MLP就能够比肩甚至超过很多运用attention机制的复杂模型。而且有个很重要的点是所用的数据占训练集很小的比例就可以达到不错的效果。<br><img src="http://piiuo16g4.bkt.clouddn.com/sr_pic2.png" alt="pic2"><br>3.评估这个框架学习到的word embedding效果如何。词向量的评价标准参考论文：《Community evaluation and exchange of word vectors at wordvectors》、《Evaluation of word vector representations by subspace alignment》<br>这个图展示的就是multi-task learning 学习到的词向量在标准的评价指标里是可以与Glove，Word2vec，fasttext等相提并论的。<br><img src="http://piiuo16g4.bkt.clouddn.com/sr_pic3.png" alt="pic3"></p>
+<p>另外地，作者深入研究了这些句子embedding有没有像这两篇参考论文《Fine-grained analysis<br>of sentence embeddings using auxiliary prediction tasks》、《Does string-based neural mt learn source syntax?》提到的可以infer一些sentence characteristics和syntactic properties。实验发现句法属性通过增加multi-lingual NMT来更好的encode。仅从NLI任务学习表示可以encode syntax但是融入到multi-task的框架里没有增强这一信号。类似地，作者发现诸如长度，单词顺序这些sentence characteristics可以通过加入parsing更好地encode。实验见下图：<br><img src="http://piiuo16g4.bkt.clouddn.com/sr_pic5.jpg" alt="pic4"></p>
+<p>这篇文章参考skip-thought里面的方式对句子表示做了个可视化，应用t-SNE技术进行投影，效果如下：<br><img src="http://piiuo16g4.bkt.clouddn.com/sr_pic4.png" alt="pic5"><br>在image-caption retrieval任务中，这篇文章的sentence embedding是超过skip-thoughts,并且能和Infersent差不多的。直接计算两个句子embedding的余弦相似度可以不错地衡量他们的semantic textual similarity。</p>
 <h1 id="三、Core-Idea"><a href="#三、Core-Idea" class="headerlink" title="三、Core Idea"></a>三、Core Idea</h1><p>这篇paperd的multi-task learning考虑了6个任务，其中5个都是Seqence-to-sequence learning。seq2seq模型是encoder-decoder模型的特殊情况，因为它的输入输出是序列化的。直接建模条件概率$P(\mathbf{y}|\mathbf{x})$。<br>所以下面先考虑单个的seq2seq模型<br>令$\mathbf{h_x}$表示input经过encoder处理后的固定长度的向量表示。<br>encoder采用bidirectional GRU,decoder用unidirectional GRU,公式如下：</p>
 <script type="math/tex; mode=display">
 \mathbf{r_t} = \sigma(\mathbf{W_r}x_t + \mathbf{U_rh_t-1} + \mathbf{C_rh_x})</script><script type="math/tex; mode=display">
@@ -129,7 +129,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/11/19/learn-general-sentence-representations/" data-id="cjopqkqyc00078eajjc4qkmk5" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/11/19/learn-general-sentence-representations/" data-id="cjoqjgdfw0007t4aj64us4rks" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/paper/">paper</a></li></ul>
@@ -181,7 +181,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/11/14/semantic-matching-Toturial/" data-id="cjopqkqxw00018eaj3a1t6w2p" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/11/14/semantic-matching-Toturial/" data-id="cjoqjgdfo0003t4ajntz07dka" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/share/">share</a></li></ul>
@@ -230,7 +230,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/11/14/environment/" data-id="cjopqkqxy00028eajsi744ol5" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/11/14/environment/" data-id="cjoqjgdff0000t4aj88a3c17l" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/practice/">practice</a></li></ul>
@@ -281,7 +281,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/11/12/hello-world/" data-id="cjopqkqxr00008eaj5ywlhwe0" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/11/12/hello-world/" data-id="cjoqjgdfk0001t4ajxv38oo7y" class="article-share-link">Share</a>
       
       
     </footer>
