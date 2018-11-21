@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Character-level CNN模型核心实现 | Sakya Personal Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Character-level ConvNets来自paper：Character-level Convolutional Networks for Text Classification，这篇paper证明了仅仅用字符信息，而不用word的信息就可以实现较好的文本分类效果。">
+<meta name="keywords" content="code">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Character-level CNN模型核心实现">
+<meta property="og:url" content="http://yoursite.com/2018/11/21/implement-charCNN/index.html">
+<meta property="og:site_name" content="Sakya Personal Blog">
+<meta property="og:description" content="Character-level ConvNets来自paper：Character-level Convolutional Networks for Text Classification，这篇paper证明了仅仅用字符信息，而不用word的信息就可以实现较好的文本分类效果。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-11-21T10:54:22.152Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Character-level CNN模型核心实现">
+<meta name="twitter:description" content="Character-level ConvNets来自paper：Character-level Convolutional Networks for Text Classification，这篇paper证明了仅仅用字符信息，而不用word的信息就可以实现较好的文本分类效果。">
+  
+    <link rel="alternate" href="/atom.xml" title="Sakya Personal Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Sakya Personal Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-implement-charCNN" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/11/21/implement-charCNN/" class="article-date">
+  <time datetime="2018-11-21T09:30:15.000Z" itemprop="datePublished">2018-11-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Character-level CNN模型核心实现
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Character-level ConvNets来自paper：Character-level Convolutional Networks for Text Classification，这篇paper证明了仅仅用字符信息，而不用word的信息就可以实现较好的文本分类效果。<br><a id="more"></a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</span><br><span class="line"></span><br><span class="line"><span class="comment"># Keeping track of l2 regularization loss (optional)</span></span><br><span class="line">l2_loss = tf.constant(<span class="number">0.0</span>)</span><br><span class="line">x_image = tf.nn.embedding_lookup(W, input_x) <span class="comment">#W是one-hot的embedding向量</span></span><br><span class="line">x_flat = tf.expand_dims(x_image, <span class="number">-1</span>)</span><br><span class="line">conv_layers = [[<span class="number">256</span>, <span class="number">7</span>, <span class="number">3</span>],</span><br><span class="line">               [<span class="number">256</span>, <span class="number">7</span>, <span class="number">3</span>],</span><br><span class="line">               [<span class="number">256</span>, <span class="number">3</span>, <span class="keyword">None</span>],</span><br><span class="line">               [<span class="number">256</span>, <span class="number">3</span>, <span class="keyword">None</span>],</span><br><span class="line">               [<span class="number">256</span>, <span class="number">3</span>, <span class="keyword">None</span>],</span><br><span class="line">               [<span class="number">256</span>, <span class="number">3</span>, <span class="number">3</span>]]</span><br><span class="line">fc_layers = [<span class="number">1024</span>, <span class="number">1024</span>]</span><br><span class="line">dropout_keep_prob = <span class="number">0.9</span></span><br><span class="line">learning_rate = <span class="number">0.001</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i, cl <span class="keyword">in</span> enumerate(conv_layers):</span><br><span class="line">    <span class="keyword">with</span> tf.name_scope(<span class="string">"conv_layer-%s"</span> % (i+<span class="number">1</span>)):</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"开始第"</span> + str(i + <span class="number">1</span>) + <span class="string">"卷积层的处理"</span></span><br><span class="line">        filter_width = x_flat.get_shape()[<span class="number">2</span>].value</span><br><span class="line">        filter_shape = [cl[<span class="number">1</span>], filter_width, <span class="number">1</span>, cl[<span class="number">0</span>]]</span><br><span class="line">        stdv = <span class="number">1</span> / sqrt(cl[<span class="number">0</span>] * cl[<span class="number">1</span>])</span><br><span class="line">        w_conv = tf.Variable(tf.random_uniform(filter_shape, minval=-stdv, maxval=stdv),</span><br><span class="line">                             dtype=<span class="string">'float32'</span>, name=<span class="string">'w'</span>)</span><br><span class="line">        <span class="comment"># w_conv = tf.Variable(tf.truncated_normal(filter_shape, stddev=0.05), name="W")</span></span><br><span class="line">        b_conv = tf.Variable(tf.random_uniform(shape=[cl[<span class="number">0</span>]], minval=-stdv, maxval=stdv), name=<span class="string">'b'</span>)</span><br><span class="line">        <span class="comment"># b_conv = tf.Variable(tf.constant(0.1, shape=[cl[0]]), name="b")</span></span><br><span class="line">        conv = tf.nn.conv2d(</span><br><span class="line">            x_flat,</span><br><span class="line">            w_conv,</span><br><span class="line">            strides=[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">            padding=<span class="string">"VALID"</span>,</span><br><span class="line">            name=<span class="string">"conv"</span></span><br><span class="line">        )</span><br><span class="line">        h_conv = tf.nn.bias_add(conv, b_conv)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> cl[<span class="number">-1</span>] <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            ksize_shape = [<span class="number">1</span>, cl[<span class="number">2</span>], <span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">            h_pool = tf.nn.max_pool(</span><br><span class="line">                h_conv,</span><br><span class="line">                ksize=ksize_shape,</span><br><span class="line">                strides=ksize_shape,</span><br><span class="line">                padding=<span class="string">'VALID'</span>,</span><br><span class="line">                name=<span class="string">'pool'</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            h_pool = h_conv</span><br><span class="line">        x_flat = tf.transpose(h_pool, [<span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], name=<span class="string">'transpose'</span>)</span><br><span class="line"><span class="keyword">with</span> tf.name_scope(<span class="string">'reshape'</span>):</span><br><span class="line">    fc_dim = x_flat.get_shape()[<span class="number">1</span>].value * x_flat.get_shape()[<span class="number">2</span>].value</span><br><span class="line">    x_flat = tf.reshape(x_flat, [<span class="number">-1</span>, fc_dim])</span><br><span class="line">weights = [fc_dim] + fc_layers</span><br><span class="line"><span class="keyword">for</span> i, fl <span class="keyword">in</span> enumerate(fc_layers):</span><br><span class="line">    <span class="keyword">with</span> tf.name_scope(<span class="string">'fc_layer-%s'</span> % (i+<span class="number">1</span>)):</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"开始第"</span> + str(i + <span class="number">1</span>) + <span class="string">"全连接层的处理"</span></span><br><span class="line">        stdv = <span class="number">1</span> / sqrt(weights[i])</span><br><span class="line">        w_fc = tf.Variable(tf.random_uniform([weights[i], fl], minval=-stdv, maxval=stdv),</span><br><span class="line">                           dtype=<span class="string">'float32'</span>, name=<span class="string">'w'</span>)</span><br><span class="line">        b_fc = tf.Variable(tf.random_uniform(shape=[fl], minval=-stdv, maxval=stdv), dtype=<span class="string">'float32'</span>, name=<span class="string">'b'</span>)</span><br><span class="line">        <span class="comment"># 不同的初始化方式</span></span><br><span class="line">        <span class="comment"># w_fc = tf.Variable(tf.truncated_normal([weights[i], fl], stddev=0.05), name="W")</span></span><br><span class="line">        <span class="comment"># b_fc = tf.Variable(tf.constant(0.1, shape=[fl]), name="b")</span></span><br><span class="line">        x_flat = tf.nn.relu(tf.matmul(x_flat, w_fc) + b_fc)</span><br><span class="line">        <span class="keyword">with</span> tf.name_scope(<span class="string">'drop_out'</span>):</span><br><span class="line">            x_flat = tf.nn.dropout(x_flat, dropout_keep_prob)</span><br><span class="line"><span class="keyword">with</span> tf.name_scope(<span class="string">'output_layer'</span>):</span><br><span class="line">    <span class="keyword">print</span> <span class="string">"开始输出层的处理"</span></span><br><span class="line">    <span class="comment"># w_out = tf.Variable(tf.truncated_normal([fc_layers[-1], num_classes], stddev=0.1), name="W")</span></span><br><span class="line">    <span class="comment"># b_out = tf.Variable(tf.constant(0.1, shape=[num_classes]), name="b")</span></span><br><span class="line">    stdv = <span class="number">1</span> / sqrt(weights[<span class="number">-1</span>])</span><br><span class="line">    w_out = tf.Variable(tf.random_uniform([fc_layers[<span class="number">-1</span>], num_classes], minval=-stdv, maxval=stdv),</span><br><span class="line">                        dtype=<span class="string">'float32'</span>, name=<span class="string">'W'</span>)</span><br><span class="line">    b_out = tf.Variable(tf.random_uniform(shape=[num_classes], minval=-stdv, maxval=stdv), name=<span class="string">'b'</span>)</span><br><span class="line">    y_pred = tf.nn.xw_plus_b(x_flat, w_out, b_out, name=<span class="string">"y_pred"</span>)</span><br><span class="line">    predictions = tf.argmax(y_pred, <span class="number">1</span>, name=<span class="string">"predictions"</span>)</span><br><span class="line"><span class="comment"># CalculateMean cross-entropy loss</span></span><br><span class="line"><span class="keyword">with</span> tf.name_scope(<span class="string">"loss"</span>):</span><br><span class="line">    losses = tf.nn.softmax_cross_entropy_with_logits(logits=y_pred, labels=input_y)</span><br><span class="line">    loss = tf.reduce_mean(losses) + l2_reg_lambda * l2_loss</span><br><span class="line"><span class="comment"># Accuracy</span></span><br><span class="line"><span class="keyword">with</span> tf.name_scope(<span class="string">"accuracy"</span>):</span><br><span class="line">    correct_predictions = tf.equal(predictions, tf.argmax(input_y, <span class="number">1</span>))</span><br><span class="line">        accuracy = tf.reduce_mean(tf.cast(correct_predictions, <span class="string">"float"</span>), name=<span class="string">"accuracy"</span>)</span><br></pre></td></tr></table></figure>
+<p>代码实现值得注意的几点：<br>1.卷子max-pool层的stride和kernel size是一样的，这样可以显著地降低维度，比如核大小是3，output维度就是input的三分之一。<br>2.两层全连接用了dropout<br>3.数据经过卷积层的维度维度变化大致是[batch_size,length,vocab_size]-&gt;(expand_dims)[batch_size,length,vocab_size,1]-&gt;(conv)[batch_size,length-kernel_size+1,vocab_size-vocab_size+1,256]-&gt;(max_pool)[batch_size,(length-kernel_size+1)/3,1,256]-&gt;(transpose)[batch_size,(length-kernel_size+1)/3,256,1]-&gt;循环……<br>4.卷积之后不做relu激活操作，直接进入max-pool。<br>5.参数初始化采用了一种根值定义方差的方式，而没有用高斯模型。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/11/21/implement-charCNN/" data-id="cjor1tchq0001qiajrtaali1t" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code/">code</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/11/21/nlp-resource/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">NLP相关资源分享</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/code/">code</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/paper/">paper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/practice/">practice</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/share/">share</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/code/" style="font-size: 10px;">code</a> <a href="/tags/paper/" style="font-size: 10px;">paper</a> <a href="/tags/practice/" style="font-size: 10px;">practice</a> <a href="/tags/share/" style="font-size: 20px;">share</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/21/implement-charCNN/">Character-level CNN模型核心实现</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/21/nlp-resource/">NLP相关资源分享</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/19/learn-general-sentence-representations/">大规模multi-task learning学习通用句子表达(general purpose distributed sentence representation)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/14/semantic-matching-Toturial/">semantic_matching_Toturial</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/14/environment/">必备环境配置</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<!--script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+</body>
+</html>
