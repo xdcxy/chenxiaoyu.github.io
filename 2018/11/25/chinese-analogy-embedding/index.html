@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>中文类比推断 | Sakya Personal Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="一.Paper TitleAnalogical Reasoning on Chinese Morphological and Semantic Relations[ACL 2018 short paper]北京师范大学的工作">
+<meta name="keywords" content="paper,share">
+<meta property="og:type" content="article">
+<meta property="og:title" content="中文类比推断">
+<meta property="og:url" content="http://yoursite.com/2018/11/25/chinese-analogy-embedding/index.html">
+<meta property="og:site_name" content="Sakya Personal Blog">
+<meta property="og:description" content="一.Paper TitleAnalogical Reasoning on Chinese Morphological and Semantic Relations[ACL 2018 short paper]北京师范大学的工作">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-11-25T07:59:24.464Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="中文类比推断">
+<meta name="twitter:description" content="一.Paper TitleAnalogical Reasoning on Chinese Morphological and Semantic Relations[ACL 2018 short paper]北京师范大学的工作">
+  
+    <link rel="alternate" href="/atom.xml" title="Sakya Personal Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Sakya Personal Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-chinese-analogy-embedding" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/11/25/chinese-analogy-embedding/" class="article-date">
+  <time datetime="2018-11-25T06:49:00.000Z" itemprop="datePublished">2018-11-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      中文类比推断
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="一-Paper-Title"><a href="#一-Paper-Title" class="headerlink" title="一.Paper Title"></a>一.Paper Title</h1><p>Analogical Reasoning on Chinese Morphological and Semantic Relations[ACL 2018 short paper]<br>北京师范大学的工作<br><a id="more"></a></p>
+<h1 id="二-Brief-Introduction"><a href="#二-Brief-Introduction" class="headerlink" title="二.Brief Introduction"></a>二.Brief Introduction</h1><h2 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h2><p>1.中文的类比推理(analogical reasoning)还是一个空白<br>2.仅有的中文analogy dataset还是从英文数据集部分翻译而来(称为CA_translated),因为只有134个中文词和三种语义关系(capital, state, and family),no morphological knowledge is considered，所以不能作为评价词向量的有效benchmark</p>
+<p>所以本文的贡献就是中文的类比推理；发布了评价中文词向量的benchmark；36个开源预训练embedding</p>
+<h2 id="Main-Methology"><a href="#Main-Methology" class="headerlink" title="Main Methology"></a>Main Methology</h2><p>本文主要考虑两种关系：Morphological Relations和 Semantic Relations。<br>其中，Morphology考虑的是词的内部结构(interal structure)。The authors clarify this special system by mapping its morphological analogies into two processes: reduplication </p>
+<ul>
+<li>bà(dad) → bà-bà(dad)</li>
+<li>tian¯ (day) → tian-ti ¯ an¯ (everyday)</li>
+<li>shuo¯(say) → shuo-shuo ¯ (say a little)</li>
+<li>kàn(look) → kàn-kàn(have a brief look)</li>
+<li>dà(big) → dà-dà(very big; greatly)</li>
+<li>shen¯ (deep) → shen-sh ¯ en¯ (deeply)</li>
+</ul>
+<p>and semi-affixation(包括21 semi-prefixes and 41 semi-suffixes)</p>
+<ul>
+<li>y¯ı(one) → dì-y¯ı(first)<br>èr(two) → dì-èr(second)</li>
+<li>pàng(fat) → pàng-zi(a fat man)<br>shòu(thin) → shòu-zi(a thin man)</li>
+</ul>
+<p>Semantic知识推断，文章分成了四类：geography,history, nature, and people</p>
+<ul>
+<li>an-hu ¯ ¯ı vs zhè-jiang ¯ (province)</li>
+<li>wanˇ vs zhè (abbreviation)</li>
+<li>hé-féi vs háng-zhou¯ (capital)</li>
+<li>huáng-méi-xì vs yuè-jù (drama)</li>
+</ul>
+<p>类比推断任务的定义是检索形如”a is to b as c is to ?”问题的答案。根据前面讨论的关系，首先对没种关系手机单词对</p>
+<h2 id="Experimental-Results"><a href="#Experimental-Results" class="headerlink" title="Experimental Results"></a>Experimental Results</h2><p>在本文的项目中，提供使用不同表征（稀疏和密集）、上下文特征（单词、n-gram、字符等）以及语料库训练的中文词向量（嵌入）。在这里，你可以轻松获得具有不同属性的预训练向量，并将它们用于各类下游任务。</p>
+<p>此外，开发者还在该工具中提供了一个中文类比推理数据集 CA8 及其评估工具包，用户可以以此评估自己词向量的质量。</p>
+<p>引用原文：<br>In Chinese analogical reasoning task, we aim at investigating to what extent word vectors capture the linguistic relations, and how it is affected by three important factors: vector representations (sparse and dense), context features (character, word, and ngram), and training corpora (size and domain).</p>
+<h3 id="表征"><a href="#表征" class="headerlink" title="表征"></a>表征</h3><p>现有的词表征方法一般可分为两种，即密集型和稀疏型的词嵌入表征。SGANS 模型（word2vec工具包中的模型）和 PPMI 模型分别是这两种表征的典型案例。SGNS 模型通过一个浅层神经网络学习低维度的密集向量，这也称为神经嵌入方法。PPMI 模型是一种稀疏的特征袋（bag-of-feature）表征方法，且它会使用正逐点互信息（PPMI）对特征进行加权。</p>
+<h3 id="上下文特征"><a href="#上下文特征" class="headerlink" title="上下文特征"></a>上下文特征</h3><p>三种上下文特征：单词、n-gram 和字符在词嵌入文献中很常用。大多数词表征方法本质上利用了词-词的共现统计，即使用词作为上下文特征（词特征）。受语言建模问题的启发，开发者将 n-gram 特征引入了上下文中。词到词和词到 n-gram 的共现统计都被用于训练 n-gram 特征。对于中文而言，字符（即汉字）通常表达了很强的语义。为此，开发者考虑使用词-词和词-字符的共现统计来学习词向量。字符级的 n-gram 的长度范围是从 1 到 4（个字符特征）。</p>
+<p>除了词、n-gram 和字符或汉字以外，还有其它对词向量的属性具有重要影响的特征。例如，使用整个文本作为上下文特征能将更多的主题信息引入到词嵌入向量中，使用依存关系解析树作为上下文特征能为词向量添加语法信息等。本项目考虑了 17 种同现类型。</p>
+<h3 id="语料库"><a href="#语料库" class="headerlink" title="语料库"></a>语料库</h3><p>开发者做了大量工作来收集多个领域的语料库。所有的文本数据都通过删除 html 和 xml 标记进行了预处理。只有纯文本被保留并使用 HanLP(v_1.5.3) 进行词分割。</p>
+<p>所有的单词都被包含其中，包括低频词。</p>
+<h1 id="三-Related-Work"><a href="#三-Related-Work" class="headerlink" title="三.Related Work"></a>三.Related Work</h1><p>SGANS(skipgram model with negative sampling) Linguistic regularities in continuous space word representations<br>PPMI(Positive Pointwise Mutual Information) Linguistic regularities in sparse and explicit word representations</p>
+<h1 id="四-Appendix"><a href="#四-Appendix" class="headerlink" title="四.Appendix"></a>四.Appendix</h1><p>项目地址：<a href="https://github.com/Embedding/Chinese-Word-Vectors" target="_blank" rel="noopener">https://github.com/Embedding/Chinese-Word-Vectors</a><br>本资源中的预训练词向量文件以文本格式存储。每一行包含一个单词及其词向量。每个值由空格分开。第一行记录元信息：第一个数字表示该单词在文件中的排序，第二个数字表示维度大小。</p>
+<p>除了密集单词向量（以 SGNS 训练），该项目还提供了稀疏向量（以 PPMI 训练）。它们与 liblinear 格式相同，其中「：」前的数字代表维度索引，「：」后的数字表示值。<br>所有的词向量由 ngram2vec 工具包训练。ngram2vec 工具包是word2vec和 fasttext 工具包的超集合，其支持抽象上下文特征和模型。</p>
+<p>ngram2vec：<a href="https://github.com/zhezhaoa/ngram2vec/" target="_blank" rel="noopener">https://github.com/zhezhaoa/ngram2vec/</a><br>word2vec：<a href="https://github.com/svn2github/word2vec" target="_blank" rel="noopener">https://github.com/svn2github/word2vec</a><br>fasttext：<a href="https://github.com/facebookresearch/fastText" target="_blank" rel="noopener">https://github.com/facebookresearch/fastText</a></p>
+<p>其他工具包：<br>繁体转简体：<a href="https://github.com/BYVoid/OpenCC" target="_blank" rel="noopener">https://github.com/BYVoid/OpenCC</a><br>分词系统：<a href="https://github.com/hankcs/HanLP" target="_blank" rel="noopener">https://github.com/hankcs/HanLP</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/11/25/chinese-analogy-embedding/" data-id="cjowlf12l0000jmaj6dy3o1j7" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/paper/">paper</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/share/">share</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/11/21/implement-charCNN/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Character-level CNN模型核心实现</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/code/">code</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/paper/">paper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/practice/">practice</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/share/">share</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/code/" style="font-size: 10px;">code</a> <a href="/tags/paper/" style="font-size: 15px;">paper</a> <a href="/tags/practice/" style="font-size: 10px;">practice</a> <a href="/tags/share/" style="font-size: 20px;">share</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/25/chinese-analogy-embedding/">中文类比推断</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/21/implement-charCNN/">Character-level CNN模型核心实现</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/21/nlp-resource/">NLP相关资源分享</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/19/learn-general-sentence-representations/">大规模multi-task learning学习通用句子表达(general purpose distributed sentence representation)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/14/semantic-matching-Toturial/">semantic_matching_Toturial</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<!--script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+</body>
+</html>

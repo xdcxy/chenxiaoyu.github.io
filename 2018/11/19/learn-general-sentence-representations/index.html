@@ -7,23 +7,23 @@
   
   <title>大规模multi-task learning学习通用句子表达(general purpose distributed sentence representation) | Sakya Personal Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一、Paper TitleLearning General Purpose Distributed Sentence Representations via large scale multi-task Learning[ICLR2018]Yoshua Bengio挂名，主要机构MILA是蒙特利尔大学">
+  <meta name="description" content="一、Paper TitleLearning General Purpose Distributed Sentence Representations via large scale multi-task Learning[ICLR 2018]Yoshua Bengio挂名，主要机构MILA是蒙特利尔大学">
 <meta name="keywords" content="paper">
 <meta property="og:type" content="article">
 <meta property="og:title" content="大规模multi-task learning学习通用句子表达(general purpose distributed sentence representation)">
 <meta property="og:url" content="http://yoursite.com/2018/11/19/learn-general-sentence-representations/index.html">
 <meta property="og:site_name" content="Sakya Personal Blog">
-<meta property="og:description" content="一、Paper TitleLearning General Purpose Distributed Sentence Representations via large scale multi-task Learning[ICLR2018]Yoshua Bengio挂名，主要机构MILA是蒙特利尔大学">
+<meta property="og:description" content="一、Paper TitleLearning General Purpose Distributed Sentence Representations via large scale multi-task Learning[ICLR 2018]Yoshua Bengio挂名，主要机构MILA是蒙特利尔大学">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/sr_pic1.png">
 <meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/sr_pic2.png">
 <meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/sr_pic3.png">
 <meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/sr_pic5.jpg">
 <meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/sr_pic4.png">
-<meta property="og:updated_time" content="2018-11-21T02:28:09.832Z">
+<meta property="og:updated_time" content="2018-11-25T06:51:27.306Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="大规模multi-task learning学习通用句子表达(general purpose distributed sentence representation)">
-<meta name="twitter:description" content="一、Paper TitleLearning General Purpose Distributed Sentence Representations via large scale multi-task Learning[ICLR2018]Yoshua Bengio挂名，主要机构MILA是蒙特利尔大学">
+<meta name="twitter:description" content="一、Paper TitleLearning General Purpose Distributed Sentence Representations via large scale multi-task Learning[ICLR 2018]Yoshua Bengio挂名，主要机构MILA是蒙特利尔大学">
 <meta name="twitter:image" content="http://piiuo16g4.bkt.clouddn.com/sr_pic1.png">
   
     <link rel="alternate" href="/atom.xml" title="Sakya Personal Blog" type="application/atom+xml">
@@ -93,7 +93,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="一、Paper-Title"><a href="#一、Paper-Title" class="headerlink" title="一、Paper Title"></a>一、Paper Title</h1><p>Learning General Purpose Distributed Sentence Representations via large scale multi-task Learning[ICLR2018]<br>Yoshua Bengio挂名，主要机构MILA是蒙特利尔大学<br><a id="more"></a></p>
+        <h1 id="一、Paper-Title"><a href="#一、Paper-Title" class="headerlink" title="一、Paper Title"></a>一、Paper Title</h1><p>Learning General Purpose Distributed Sentence Representations via large scale multi-task Learning[ICLR 2018]<br>Yoshua Bengio挂名，主要机构MILA是蒙特利尔大学<br><a id="more"></a></p>
 <h1 id="二、Brief-Introduction"><a href="#二、Brief-Introduction" class="headerlink" title="二、Brief Introduction"></a>二、Brief Introduction</h1><h2 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h2><p>1.这篇文章受Transfer Learning在NLP和CV中的成功启发。在例如image captioning和visual question answering任务中，经常在ImageNet上使用预训练得到的CNN去提取图片的表示。NLP中则用预训练的词向量。<br>2.虽然word embedding经常被用来初始化NLP的模型，但是word in context的学习却往往从头开始。这在大部分情况下是不可行的，特别是数据量较少的情况，不能很好地进行监督学习。于是本文的期望是有一个general purpose sentence representations可以对很多任务有所帮助，从而不需要仅仅实用了词向量，其他上下文的表示都要从头再学。<br>3.要在representation learning中有所进展，需要理解不同的网络模型建模的结果产生的inductive biases是什么样的，比如NMT模型被证明主要抓取形态学(morphology)和句法(syntactic)的属性。<br>4.要在diverse的任务中generalize,那么对句子从不同角度进行编码是十分重要的。利用不同模型方法(skip-thoughts,machine translation,natural language inference,constituency parsing)会得到不同inductive biases。</p>
 <h2 id="Main-Methology"><a href="#Main-Methology" class="headerlink" title="Main Methology"></a>Main Methology</h2><p>1.采用one-to-many multi-task learning framework,其中encoder模块在不同任务中是共享的。这个框架设计基于的假设是从大量没什么关联的NLP任务中学习的句子表示更具普适性，能够更好地处理没有见过的任务，since this process encodes the inductive biases of multiple models。<br>2.目标是得到fixed-length distributed sentence representations。</p>
 <h2 id="Experimental-Results"><a href="#Experimental-Results" class="headerlink" title="Experimental Results"></a>Experimental Results</h2><p>这篇文章主要从三个角度衡量了模型的效果，这三个角度都是参考的以下论文：《Skip-thought vectors》、《Learning distributed representations of sentences from unlabelled data》、《Supervised learning of universal sentence representations from natural language inference data》<br>1.将学习到的通用的句子表示用于没参与训练的文本分类任务的简单分类器的feature<br>下面的图列出了10个分类任务上模型的效果， 这篇paper使用的是简单逻辑回归加上通用句子表示，主要对比的对象是Infersent，最后一列都列出了相对于这个baseline的平均提升。整体上task越多效果越好。<br><img src="http://piiuo16g4.bkt.clouddn.com/sr_pic1.png" alt="pic1"><br>其中(MR, CR, SUBJ &amp; MPQA)这四个是情感分类任务，相对提升在1.1%至2%，TREC上提升较大，相比于infersent 6%，CNN-LSTM 2%<br>2.这种transfer learning的方法在low-resource的任务中表现如何</p>
@@ -138,7 +138,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/11/19/learn-general-sentence-representations/" data-id="cjor1tci60009qiajez79hxwg" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/11/19/learn-general-sentence-representations/" data-id="cjowlf136000hjmaj1sr8k36v" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/paper/">paper</a></li></ul>
@@ -190,7 +190,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/code/" style="font-size: 10px;">code</a> <a href="/tags/paper/" style="font-size: 10px;">paper</a> <a href="/tags/practice/" style="font-size: 10px;">practice</a> <a href="/tags/share/" style="font-size: 20px;">share</a>
+      <a href="/tags/code/" style="font-size: 10px;">code</a> <a href="/tags/paper/" style="font-size: 15px;">paper</a> <a href="/tags/practice/" style="font-size: 10px;">practice</a> <a href="/tags/share/" style="font-size: 20px;">share</a>
     </div>
   </div>
 
@@ -212,6 +212,10 @@
       <ul>
         
           <li>
+            <a href="/2018/11/25/chinese-analogy-embedding/">中文类比推断</a>
+          </li>
+        
+          <li>
             <a href="/2018/11/21/implement-charCNN/">Character-level CNN模型核心实现</a>
           </li>
         
@@ -225,10 +229,6 @@
         
           <li>
             <a href="/2018/11/14/semantic-matching-Toturial/">semantic_matching_Toturial</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/14/environment/">必备环境配置</a>
           </li>
         
       </ul>
