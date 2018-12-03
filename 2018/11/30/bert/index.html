@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Bert模型分析和NLP预训练 | Sakya Personal Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="一、简介BERT 的核心过程非常简洁，它会先从数据集抽取两个句子，其中第二句是第一句的下一句的概率是 50%，这样就能学习句子之间的关系。其次随机去除两个句子中的一些词，并要求模型预测这些词是什么，这样就能学习句子内部的关系。最后再将经过处理的句子传入大型 Transformer 模型，并通过两个损失函数同时学习上面两个目标就能完成训练。 业界广泛认为谷歌新提出来的 BERT 预训练模型主要在三方">
+<meta name="keywords" content="code,algorithm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bert模型分析和NLP预训练">
+<meta property="og:url" content="http://yoursite.com/2018/11/30/bert/index.html">
+<meta property="og:site_name" content="Sakya Personal Blog">
+<meta property="og:description" content="一、简介BERT 的核心过程非常简洁，它会先从数据集抽取两个句子，其中第二句是第一句的下一句的概率是 50%，这样就能学习句子之间的关系。其次随机去除两个句子中的一些词，并要求模型预测这些词是什么，这样就能学习句子内部的关系。最后再将经过处理的句子传入大型 Transformer 模型，并通过两个损失函数同时学习上面两个目标就能完成训练。 业界广泛认为谷歌新提出来的 BERT 预训练模型主要在三方">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/pre-train.png">
+<meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/elmo1.png">
+<meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/elmo2.png">
+<meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/opt_inputs.png">
+<meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/transformer.png">
+<meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/3pretrain_model.png">
+<meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/bert_input.png">
+<meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/bert_pre_train.png">
+<meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/bert_fine_tune.png">
+<meta property="og:updated_time" content="2018-12-03T11:26:45.835Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bert模型分析和NLP预训练">
+<meta name="twitter:description" content="一、简介BERT 的核心过程非常简洁，它会先从数据集抽取两个句子，其中第二句是第一句的下一句的概率是 50%，这样就能学习句子之间的关系。其次随机去除两个句子中的一些词，并要求模型预测这些词是什么，这样就能学习句子内部的关系。最后再将经过处理的句子传入大型 Transformer 模型，并通过两个损失函数同时学习上面两个目标就能完成训练。 业界广泛认为谷歌新提出来的 BERT 预训练模型主要在三方">
+<meta name="twitter:image" content="http://piiuo16g4.bkt.clouddn.com/pre-train.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Sakya Personal Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Sakya Personal Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-bert" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/11/30/bert/" class="article-date">
+  <time datetime="2018-11-30T07:05:43.000Z" itemprop="datePublished">2018-11-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Bert模型分析和NLP预训练
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h1><p>BERT 的核心过程非常简洁，它会先从数据集抽取两个句子，其中第二句是第一句的下一句的概率是 50%，这样就能学习句子之间的关系。其次随机去除两个句子中的一些词，并要求模型预测这些词是什么，这样就能学习句子内部的关系。最后再将经过处理的句子传入大型 Transformer 模型，并通过两个损失函数同时学习上面两个目标就能完成训练。</p>
+<p>业界广泛认为谷歌新提出来的 BERT 预训练模型主要在三方面会启发今后的研究，即对预训练 NLP 模型的贡献、计算力对研究的重要性、以及研究团队和工程能力。<br><a id="more"></a></p>
+<h3 id="预训练NLP模型"><a href="#预训练NLP模型" class="headerlink" title="预训练NLP模型"></a>预训练NLP模型</h3><p>其实预训练模型或迁移学习很早就有人研究，但真正广受关注还是在近几年。清华大学刘知远表示：「大概在前几年，可能很多人都认为预训练的意义不是特别大，当时感觉直接在特定任务上做训练可能效果会更好。我认为 BERT 相当于在改变大家的观念，即在极大数据集上进行预训练对于不同的 NLP 任务都会有帮助。」</p>
+<p>虽然 CV 领域的预训练模型展现出强大的能力，但 NLP 领域也一直探讨实现无监督预训练的方法，复旦大学邱锡鹏说：「其实早在 16 年的时候，我们在知乎上讨论过 NLP 的发展方向。我记得当初回答 NLP 有两个问题，其中第一个就是怎么充分挖掘无标注数据，而 BERT 这篇论文提供了两个很好的方向来挖掘无标注数据的潜力。虽然这两个方法本身并不新颖，但它相当于做得非常极致。另外一个问题是 Transformer，它当时在机器翻译中已经展示出非常强的能力，其实越大的数据量就越能显示出这个结构的优点，因为它可以叠加非常深的层级。」</p>
+<p>深度好奇创始人兼 CTO 吕正东博士最后总结道：「通用的 composition architecture + 大量数据 + 好的 unsupervised 损失函数，带来的好的 sentence model, 可以走很远。它的架构以及它作为 pre-trained model 的使用方式，都非常类似视觉领域的好的深度分类模型，如 AlexNet 和 Residual Net。」</p>
+<p>下面介绍常见的语言模型的预训练方法，包括Bert在内，还有ELMO和OpenAI GPT。<br>语言模型就是根据上下文去预测下一个词是什么，这不需要人工标注语料，所以语言模型能够从无限制的大规模单语语料中，学习到丰富的语义知识。<br>接下来再简单介绍一下预训练的思想。我们知道目前神经网络在进行训练的时候基本都是基于后向传播（BP）算法，通过对网络模型参数进行随机初始化，然后通过 BP 算法利用例如 SGD 这样的优化算法去优化模型参数。</p>
+<p>那么预训练的思想就是，该模型的参数不再是随机初始化，而是先有一个任务进行训练得到一套模型参数，然后用这套参数对模型进行初始化，再进行训练。<br><img src="http://piiuo16g4.bkt.clouddn.com/pre-train.png" alt="pre-train"><br>其实早期的使用自编码器栈式搭建深度神经网络就是这个思想。还有词向量也可以看成是第一层 word embedding 进行了预训练，此外在基于神经网络的迁移学习中也大量用到了这个思想。</p>
+<p>ELMO(《Deep Contextualized Word Representations》)的motivation是他们认为一个预训练的词表示应该能够包含丰富的句法和语义信息，并且能够对多义词进行建模。而传统的词向量（例如 word2vec）是上下文无关的。例如下面”apple”的例子，这两个”apple”根据上下文意思是不同的，但是在 word2vec 中，只有 apple 一个词向量，无法对一词多义进行建模。所以他们利用语言模型来获得一个上下文相关的预训练表示，称为 ELMo，并在 6 个 NLP 任务上获得了提升。</p>
+<p>在 EMLo 中，他们使用的是一个双向的 LSTM 语言模型，由一个前向和一个后向语言模型构成，目标函数就是取这两个方向语言模型的最大似然。<br><img src="http://piiuo16g4.bkt.clouddn.com/elmo1.png" alt="elmo1"><br>在预训练好这个语言模型之后，ELMo 就是根据下面的公式来用作词表示，其实就是把这个双向语言模型的每一中间层进行一个求和。最简单的也可以使用最高层的表示来作为 ELMo。<br><img src="http://piiuo16g4.bkt.clouddn.com/elmo2.png" alt="elmo2"></p>
+<p>然后在进行有监督的 NLP 任务时，可以将 ELMo 直接当做特征拼接到具体任务模型的词向量输入或者是模型的最高层表示上。</p>
+<p>总结一下，不像传统的词向量，每一个词只对应一个词向量，ELMo 利用预训练好的双向语言模型，然后根据具体输入从该语言模型中可以得到上下文依赖的当前词表示（对于不同上下文的同一个词的表示是不一样的），再当成特征加入到具体的 NLP 有监督模型里。 </p>
+<p>OpenAI GPT(《Improving Language Understanding by Generative Pre-Training》)。他们的目标是学习一个通用的表示，能够在大量任务上进行应用。<br>这篇论文的亮点主要在于，他们利用了Transformer网络代替了LSTM作为语言模型来更好的捕获长距离语言结构。然后在进行具体任务有监督微调时使用了语言模型作为附属任务训练目标。最后在 12 个 NLP 任务上进行了实验，9 个任务获得了 SOTA。</p>
+<p>首先我们来看一下他们无监督预训练时的语言模型。他们仍然使用的是标准的语言模型目标函数，即通过前 k 个词预测当前词，但是在语言模型网络上，他们使用了 Google 团队在 Attention is all your need 论文中提出的 Transformer 解码器作为语言模型。<br>然后在具体 NLP 任务有监督微调时，与 ELMo 当成特征的做法不同，OpenAI GPT 不需要再重新对任务构建新的模型结构，而是直接在 Transformer 这个语言模型上的最后一层接上 softmax 作为任务输出层，然后再对这整个模型进行微调。他们还发现，如果使用语言模型作为辅助任务，能够提升有监督模型的泛化能力，并且能够加速收敛。<br>由于不同 NLP 任务的输入有所不同，在 Transformer 模型的输入上针对不同 NLP 任务也有所不同。</p>
+<p>具体如下图，对于分类任务直接讲文本输入即可；对于文本蕴涵任务，需要将前提和假设用一个 Delim 分割向量拼接后进行输入；对于文本相似度任务，在两个方向上都使用 Delim 拼接后，进行输入；对于像问答多选择的任务，就是将每个答案和上下文进行拼接进行输入。<br><img src="http://piiuo16g4.bkt.clouddn.com/opt_inputs.png" alt="opt_inputs"></p>
+<p>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding这篇论文把预训练语言表示方法分为了基于特征的方法（代表 ELMo）和基于微调的方法（代表 OpenAI GPT）。而目前这两种方法在预训练时都是使用单向的语言模型来学习语言表示。<br>这篇论文中，作者们证明了使用双向的预训练效果更好。其实这篇论文方法的整体框架和 GPT 类似，是进一步的发展。具体的，BERT 是使用 Transformer 的编码器来作为语言模型，在语言模型预训练的时候，提出了两个新的目标任务（即遮挡语言模型 MLM 和预测下一个句子的任务），最后在 11 个 NLP 任务上取得了 SOTA。</p>
+<h3 id="Bert官方预训练模型"><a href="#Bert官方预训练模型" class="headerlink" title="Bert官方预训练模型"></a>Bert官方预训练模型</h3><p>在众多研究者的关注下，谷歌发布了 BERT 的实现代码与预训练模型。其中代码比较简单，基本上是标准的 Transformer 实现，但是发布的预训练模型非常重要，因为它需要的计算力太多。总体而言，谷歌开放了预训练的 BERT-Base 和 BERT-Large 模型，且每一种模型都有 Uncased 和 Cased 两种版本。</p>
+<p>其中 Uncased 在使用 WordPiece 分词之前都转换为小写格式，并剔除所有 Accent Marker，而 Cased 会保留它们。项目作者表示一般使用 Uncased 模型就可以了，除非大小写对于任务很重要才会使用 Cased 版本。所有预训练模型及其地址如下：</p>
+<ul>
+<li>BERT-Base, Uncased：12-layer, 768-hidden, 12-heads, 110M parameters<br>地址：<a href="https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-12_H-768_A-12.zip" target="_blank" rel="noopener">https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-12_H-768_A-12.zip</a></li>
+</ul>
+<ul>
+<li>BERT-Large, Uncased：24-layer, 1024-hidden, 16-heads, 340M parameters<br>地址：<a href="https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-24_H-1024_A-16.zip" target="_blank" rel="noopener">https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-24_H-1024_A-16.zip</a></li>
+</ul>
+<ul>
+<li>BERT-Base, Cased：12-layer, 768-hidden, 12-heads , 110M parameters<br>地址：<a href="https://storage.googleapis.com/bert_models/2018_10_18/cased_L-12_H-768_A-12.zip" target="_blank" rel="noopener">https://storage.googleapis.com/bert_models/2018_10_18/cased_L-12_H-768_A-12.zip</a></li>
+</ul>
+<ul>
+<li>BERT-Large, Cased：24-layer, 1024-hidden, 16-heads, 340M parameters（目前无法使用，需要重新生成）。</li>
+</ul>
+<p>每一个 ZIP 文件都包含了三部分，即保存预训练模型与权重的 ckpt 文件、将 WordPiece 映射到单词 id 的 vocab 文件，以及指定模型超参数的 json 文件。除此之外，谷歌还发布了原论文中将预训练模型应用于各种 NLP 任务的源代码，查看 GitHub 项目复现论文结果。<br>BERT 官方项目地址：<a href="https://github.com/google-research/bert" target="_blank" rel="noopener">https://github.com/google-research/bert</a></p>
+<p>最后，这个项目可以在 CPU、GPU 和 TPU 上运行，但是在有 12GB 到 16GB 显存的 GPU 上，很可能模型会发生显存不足的问题。因此读者也可以在 Colab 先试着使用 BERT，如下展示了在 Colab 上使用免费 TPU 微调 BERT 的 Notebook：</p>
+<p>BERT Colab 地址：<a href="https://colab.sandbox.google.com/github/tensorflow/tpu/blob/master/tools/colab/bert_finetuning_with_cloud_tpus.ipynb" target="_blank" rel="noopener">https://colab.sandbox.google.com/github/tensorflow/tpu/blob/master/tools/colab/bert_finetuning_with_cloud_tpus.ipynb</a></p>
+<h1 id="二、-Transformer概览"><a href="#二、-Transformer概览" class="headerlink" title="二、 Transformer概览"></a>二、 Transformer概览</h1><p>在整个 Transformer 架构中，它只使用了注意力机制和全连接层来处理文本，因此 Transformer 确实没使用循环神经网络或卷积神经网络实现「特征抽取」这一功能。此外，Transformer 中最重要的就是自注意力机制，这种在序列内部执行 Attention 的方法可以视为搜索序列内部的隐藏关系，这种内部关系对于翻译以及序列任务的性能有显著提升。</p>
+<p>如 Seq2Seq 一样，原版 Transformer 也采用了编码器-解码器框架，但它们会使用多个 Multi-Head Attention、前馈网络、层级归一化和残差连接等。下图从左到右展示了原论文所提出的 Transformer 架构、Multi-Head Attention 和点乘注意力。本文只简要介绍这三部分的基本概念与结构，更详细的 Transformer 解释与实现请<a href="https://mp.weixin.qq.com/s?__biz=MzA3MzI4MjgzMw==&amp;mid=2650742155&amp;idx=1&amp;sn=137825a13a4c31fffb6b2347c0304366&amp;chksm=871ad9f5b06d50e31e2857a08a4a9ae9f57fd0191be580952d80f1518779594670cccc903fbe&amp;scene=21" target="_blank" rel="noopener">查看机器之心的 GitHub 项目：基于注意力机制，机器之心带你理解与训练神经机器翻译系统</a> 。</p>
+<p>其中点乘注意力是注意力机制的一般表达形式，将多个点乘注意力叠加在一起可以组成 Transformer 中最重要的 Multi-Head Attention 模块，多个 Multi-Head Attention 模块堆叠在一起就组成了 Transformer 的主体结构，并借此抽取文本中的信息。<br><img src="http://piiuo16g4.bkt.clouddn.com/transformer.png" alt="transformer"></p>
+<p>上图右边的点乘注意力其实就是标准 Seq2Seq 模型中的注意力机制。其中 Query 向量与 Value 向量在 NMT 中相当于目标语输入序列与源语输入序列，Query 与 Key 向量的点乘相当于余弦相似性，经过 SoftMax 函数后可得出一组归一化的概率。这些概率相当于给源语输入序列做加权平均，即表示在生成一个目标语单词时源语序列中哪些词是重要的。</p>
+<p>上图中间的 Multi-head Attention 其实就是多个点乘注意力并行处理并将最后的结果拼接在一起。这种注意力允许模型联合关注不同位置的不同表征子空间信息，我们可以理解为在参数不共享的情况下，多次执行点乘注意力。</p>
+<p>最后上图左侧为 Transformer 的整体架构。输入序列首先会转换为词嵌入向量，在与位置编码向量相加后可作为 Multi-Head 自注意力模块的输入，自注意力模块表示 Q、V、K 三个矩阵都是相同的。该模块的输出再经过一个全连接层就可以作为编码器模块的输出。</p>
+<p>原版 Transformer 的解码器与编码器结构基本一致，只不过在根据前面译文预测当前译文时会用到编码器输出的原语信息。在 BERT 论文中，研究者表示他们只需要使用编码器抽取文本信息，因此相对于原版架构只需要使用编码器模块。</p>
+<p>在模型架构上，BERT 使用了非常深的网络，原版 Transformer 只堆叠了 6 个编码器解码器模块，即上图的 N=6。而 BERT 基础模型使用了 12 个编码器模块（N=12），BERT 大模型堆叠了 24 个编码器模块（N=24）。其中堆叠了 6 个模块的 BERT 基础模型主要是为了和 OpenAI GPT 进行对比。</p>
+<h1 id="三、-Bert论文解读"><a href="#三、-Bert论文解读" class="headerlink" title="三、 Bert论文解读"></a>三、 Bert论文解读</h1><p>BERT 的全称是基于 Transformer 的双向编码器表征，其中「双向」表示模型在处理某一个词时，它能同时利用前面的词和后面的词两部分信息。这种「双向」的来源在于 BERT 与传统语言模型不同，它不是在给定所有前面词的条件下预测最可能的当前词，而是随机遮掩一些词，并利用所有没被遮掩的词进行预测。下图展示了三种预训练模型，其中 BERT 和 ELMo 都使用双向信息，OpenAI GPT 使用单向信息。<br><img src="http://piiuo16g4.bkt.clouddn.com/3pretrain_model.png" alt="3pretrain_model"></p>
+<p>如上所示为不同预训练模型的架构，BERT 可以视为结合了 OpenAI GPT 和 ELMo 优势的新模型。其中 ELMo 使用两条独立训练的 LSTM 获取双向信息，而 OpenAI GPT 使用新型的 Transformer 和经典语言模型只能获取单向信息。BERT 的主要目标是在 OpenAI GPT 的基础上对预训练任务做一些改进，以同时利用 Transformer 深度模型与双向信息的优势。</p>
+<h3 id="输入表征"><a href="#输入表征" class="headerlink" title="输入表征"></a>输入表征</h3><p>前面已经了解过 BERT 最核心的过程就是同时预测加了 MASK 的缺失词与 A/B 句之间的二元关系，而这些首先都需要体现在模型的输入中，在 Jacob 等研究者的原论文中，有一张图很好地展示了模型输入的结构。<br><img src="http://piiuo16g4.bkt.clouddn.com/bert_input.png" alt="bert_input"></p>
+<p>如上所示，输入有 A 句「my dog is cute」和 B 句「he likes playing」这两个自然句，我们首先需要将每个单词及特殊符号都转化为词嵌入向量，因为神经网络只能进行数值计算。其中特殊符 [SEP] 是用于分割两个句子的符号，前面半句会加上分割编码 A，后半句会加上分割编码 B。</p>
+<p>因为要建模句子之间的关系，BERT 有一个任务是预测 B 句是不是 A 句后面的一句话，而这个分类任务会借助 A/B 句最前面的特殊符 [CLS] 实现，该特殊符可以视为汇集了整个输入序列的表征。</p>
+<p>最后的位置编码是 Transformer 架构本身决定的，因为基于完全注意力的方法并不能像 CNN 或 RNN 那样编码词与词之间的位置关系，但是正因为这种属性才能无视距离长短建模两个词之间的关系。因此为了令 Transformer 感知词与词之间的位置关系，我们需要使用位置编码给每个词加上位置信息。</p>
+<h3 id="预训练过程"><a href="#预训练过程" class="headerlink" title="预训练过程"></a>预训练过程</h3><p>BERT 最核心的就是预训练过程，这也是该论文的亮点所在。简单而言，模型会从数据集抽取两句话，其中 B 句有 50% 的概率是 A 句的下一句，然后将这两句话转化前面所示的输入表征。现在我们随机遮掩（Mask 掉）输入序列中 15% 的词，并要求 Transformer 预测这些被遮掩的词，以及 B 句是 A 句下一句的概率这两个任务。<br><img src="http://piiuo16g4.bkt.clouddn.com/bert_pre_train.png" alt="bert_pretrain"></p>
+<p>首先谷歌使用了 BooksCorpus（8 亿词量）和他们自己抽取的 Wikipedia（25 亿词量）数据集，每次迭代会抽取 256 个序列（A+B），一个序列的长度为小于等于 512 个「词」。因此 A 句加 B 句大概是 512 个词，每一个「句子」都是非常长的一段话，这和一般我们所说的句子是不一样的。这样算来，每次迭代模型都会处理 12.8 万词。</p>
+<p>对于二分类任务，在抽取一个序列（A+B）中，B 有 50% 的概率是 A 的下一句。如果是的话就会生成标注「IsNext」，不是的话就会生成标注「NotNext」，这些标注可以作为二元分类任务判断模型预测的凭证。</p>
+<p>对于 Mask 预测任务，首先整个序列会随机 Mask 掉 15% 的词，这里的 Mask 不只是简单地用「[MASK]」符号代替某些词，因为这会引起预训练与微调两阶段不是太匹配。所以谷歌在确定需要 Mask 掉的词后，80% 的情况下会直接替代为「[MASK]」，10% 的情况会替代为其它任意的词，最后 10% 的情况会保留原词。</p>
+<ul>
+<li>原句：my dog is hairy</li>
+<li>80%：my dog is [MASK]</li>
+<li>10%：my dog is apple</li>
+<li>10%：my dog is hairy</li>
+</ul>
+<p>注意最后 10% 保留原句是为了将表征偏向真实观察值，而另外 10% 用其它词替代原词并不会影响模型对语言的理解能力，因为它只占所有词的 1.5%（0.1 × 0.15）。此外，作者在论文中还表示因为每次只能预测 15% 的词，因此模型收敛比较慢。</p>
+<h3 id="微调过程"><a href="#微调过程" class="headerlink" title="微调过程"></a>微调过程</h3><p>最后预训练完模型，就要尝试把它们应用到各种 NLP 任务中，并进行简单的微调。不同的任务在微调上有一些差别，但 BERT 已经强大到能为大多数 NLP 任务提供高效的信息抽取功能。对于分类问题而言，例如预测 A/B 句是不是问答对、预测单句是不是语法正确等，它们可以直接利用特殊符 [CLS] 所输出的向量 C，即 P = softmax(C * W)，新任务只需要微调权重矩阵 W 就可以了。</p>
+<p>对于其它序列标注或生成任务，我们也可以使用 BERT 对应的输出信息作出预测，例如每一个时间步输出一个标注或词等。下图展示了 BERT 在 11 种任务中的微调方法，它们都只添加了一个额外的输出层。在下图中，Tok 表示不同的词、E 表示输入的嵌入向量、T_i 表示第 i 个词在经过 BERT 处理后输出的上下文向量。</p>
+<p><img src="http://piiuo16g4.bkt.clouddn.com/bert_fine_tune.png" alt="bert_fine_tune"></p>
+<p>如上图所示，句子级的分类问题只需要使用对应 [CLS] 的 C 向量，例如（a）中判断问答对是不是包含正确回答的 QNLI、判断两句话有多少相似性的 STS-B 等，它们都用于处理句子之间的关系。句子级的分类还包含（b）中判语句中断情感趋向的 SST-2 和判断语法正确性的 CoLA 任务，它们都是处理句子内部的关系。</p>
+<p>在 SQuAD v1.1 问答数据集中，研究者将问题和包含回答的段落分别作为 A 句与 B 句，并输入到 BERT 中。通过 B 句的输出向量，模型能预测出正确答案的位置与长度。最后在命名实体识别数据集 CoNLL 中，每一个 Tok 对应的输出向量 T 都会预测它的标注是什么，例如人物或地点等。</p>
+<h1 id="四、官方模型详情"><a href="#四、官方模型详情" class="headerlink" title="四、官方模型详情"></a>四、官方模型详情</h1><p>前面我们已经介绍过谷歌官方发布的 BERT 项目，这一部分主要会讨论如何在不同的 NLP 任务中微调预训练模型，以及怎样使用预训练 BERT 抽取文本的语义特征。此外，原项目还展示了 BERT 的预训练过程，但由于它需要的计算力太大，因此这里并不做介绍，读者可详细阅读原项目的说明文件。</p>
+<p>项目地址：<a href="https://github.com/google-research/bert" target="_blank" rel="noopener">https://github.com/google-research/bert</a></p>
+<p>微调预训练 BERT</p>
+<p>该项目表示原论文中 11 项 NLP 任务的微调都是在单块 Cloud TPU（64GB RAM）上进行的，目前无法使用 12GB - 16GB 内存的 GPU 复现论文中 BERT-Large 模型的大部分结果，因为内存匹配的最大批大小仍然太小。但是基于给定的超参数，BERT-Base 模型在不同任务上的微调应该能够在一块 GPU（显存至少 12GB）上运行。</p>
+<p>这里主要介绍如何在句子级的分类任务以及标准问答数据集（SQuAD）微调 BERT-Base 模型，其中微调过程主要使用一块 GPU。而 BERT-Large 模型的微调读者可以参考原项目。</p>
+<p>以下为原项目中展示的句子级分类任务的微调，在运行该示例之前，你必须运行一个脚本下载GLUE data，并将它放置到目录$GLUE_DIR。然后，下载预训练BERT-Base模型，解压缩后存储到目录$BERT_BASE_DIR。</p>
+<p>GLUE data 脚本地址：<a href="https://gist.github.com/W4ngatang/60c2bdb54d156a41194446737ce03e2e" target="_blank" rel="noopener">https://gist.github.com/W4ngatang/60c2bdb54d156a41194446737ce03e2e</a></p>
+<p>该示例代码在Microsoft Research Paraphrase Corpus（MRPC）上对BERT-Base进行微调，该语料库仅包含3600个样本，在大多数GPU上该微调过程仅需几分钟。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> BERT_BASE_DIR=/path/to/bert/uncased_L-12_H-768_A-12export GLUE_DIR=/path/to/glue</span><br><span class="line"></span><br><span class="line">python run_classifier.py \</span><br><span class="line">  --task_name=MRPC \</span><br><span class="line">  --do_train=<span class="literal">true</span> \</span><br><span class="line">  --do_eval=<span class="literal">true</span> \</span><br><span class="line">  --data_dir=<span class="variable">$GLUE_DIR</span>/MRPC \</span><br><span class="line">  --vocab_file=<span class="variable">$BERT_BASE_DIR</span>/vocab.txt \</span><br><span class="line">  --bert_config_file=<span class="variable">$BERT_BASE_DIR</span>/bert_config.json \</span><br><span class="line">  --init_checkpoint=<span class="variable">$BERT_BASE_DIR</span>/bert_model.ckpt \</span><br><span class="line">  --max_seq_length=128 \</span><br><span class="line">  --train_batch_size=32 \</span><br><span class="line">  --learning_rate=2e-5 \</span><br><span class="line">  --num_train_epochs=3.0 \</span><br><span class="line">  --output_dir=/tmp/mrpc_output/</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">***** Eval results *****</span><br><span class="line">  eval_accuracy = 0.845588</span><br><span class="line">  eval_loss = 0.505248</span><br><span class="line">  global_step = 343</span><br><span class="line">  loss = 0.505248</span><br></pre></td></tr></table></figure>
+<p>可以看到，开发集准确率是84.55%。类似MRPC这样的较小数据集在开发集准确率上方差较高，即使是从同样的预训练检查点开始运行。如果你重新运行多次（确保使用不同的output_dir），结果将在84%和88%之间。注意：你或许会看到信息“Running train on CPU.”这只是表示模型不是运行在Cloud TPU上而已。</p>
+<h3 id="通过预训练BERT抽取语义特征"><a href="#通过预训练BERT抽取语义特征" class="headerlink" title="通过预训练BERT抽取语义特征"></a>通过预训练BERT抽取语义特征</h3><p>对于原论文11项任务之外的试验，我们也可以通过预训练BERT抽取定长的语义特征向量。因为在特定案例中，与其端到端微调整个预训练模型，直接获取预训练上下文嵌入向量会更有效果，并且也可以缓解大多数内存不足问题。在这个过程中，每个输入token的上下文嵌入向量指预训练模型隐藏层生成的定长上下文表征。</p>
+<p>例如，我们可以使用脚本extract_features.py 抽取语义特征：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Sentence A and Sentence B are separated by the ||| delimiter.# For single sentence inputs, don't use the delimiter.echo 'Who was Jim Henson ? ||| Jim Henson was a puppeteer' &gt; /tmp/input.txt</span></span><br><span class="line">python extract_features.py \</span><br><span class="line">  --input_file=/tmp/input.txt \</span><br><span class="line">  --output_file=/tmp/output.jsonl \</span><br><span class="line">  --vocab_file=<span class="variable">$BERT_BASE_DIR</span>/vocab.txt \</span><br><span class="line">  --bert_config_file=<span class="variable">$BERT_BASE_DIR</span>/bert_config.json \</span><br><span class="line">  --init_checkpoint=<span class="variable">$BERT_BASE_DIR</span>/bert_model.ckpt \</span><br><span class="line">  --layers=-1,-2,-3,-4 \</span><br><span class="line">  --max_seq_length=128 \</span><br><span class="line">  --batch_size=8</span><br></pre></td></tr></table></figure>
+<p>上面的脚本会创建一个JSON文件（每行输入占一行），JSON文件包含layers指定的每个Transformer层的BERT激活值（-1是Transformer的最后一个隐藏层）。注意这个脚本将生成非常大的输出文件，默认情况下每个输入token 会占据 15kb 左右的空间。</p>
+<p>最后，项目作者表示它们近期会解决GPU显存占用太多的问题，并且会发布多语言版的BERT预训练模型。他们表示只要在维基百科有比较大型的数据，那么他们就能提供预训练模型，因此我们还能期待下次谷歌发布基于中文语料的BERT预训练模型。</p>
+<h1 id="五、Bert代码解读："><a href="#五、Bert代码解读：" class="headerlink" title="五、Bert代码解读："></a>五、Bert代码解读：</h1><ul>
+<li><a href="https://blog.csdn.net/weixin_39470744/article/details/84373933" target="_blank" rel="noopener">谷歌BERT预训练源码解析（一）：训练数据生成</a></li>
+<li><a href="https://blog.csdn.net/weixin_39470744/article/details/84401339" target="_blank" rel="noopener">谷歌BERT预训练源码解析（二）：模型构建</a></li>
+<li><a href="https://blog.csdn.net/weixin_39470744/article/details/84619903" target="_blank" rel="noopener">谷歌BERT预训练源码解析（三）：训练过程</a></li>
+</ul>
+<h1 id="六、附录"><a href="#六、附录" class="headerlink" title="六、附录"></a>六、附录</h1><p>本文主要参考两篇文章：<br><a href="https://mp.weixin.qq.com/s/vFdm-UHns7Nhbmdoiu6jWg" target="_blank" rel="noopener">谷歌终于开源BERT代码：3 亿参数量，机器之心全面解读</a><br><a href="https://mp.weixin.qq.com/s/A-PKyZcXwOz-2lL-hBmjsA" target="_blank" rel="noopener">自然语言处理中的语言模型预训练方法</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/11/30/bert/" data-id="cjp88cbay000g8bajpirvkzm8" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/">algorithm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/code/">code</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/11/25/chinese-analogy-embedding/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">中文类比推断</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code/">code</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/paper/">paper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/practice/">practice</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/share/">share</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/code/" style="font-size: 15px;">code</a> <a href="/tags/paper/" style="font-size: 15px;">paper</a> <a href="/tags/practice/" style="font-size: 10px;">practice</a> <a href="/tags/share/" style="font-size: 20px;">share</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/30/bert/">Bert模型分析和NLP预训练</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/25/chinese-analogy-embedding/">中文类比推断</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/21/implement-charCNN/">Character-level CNN模型核心实现</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/21/nlp-resource/">NLP相关资源分享</a>
+          </li>
+        
+          <li>
+            <a href="/2018/11/19/learn-general-sentence-representations/">大规模multi-task learning学习通用句子表达(general purpose distributed sentence representation)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<!--script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+</body>
+</html>
