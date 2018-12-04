@@ -17,8 +17,10 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/decaNLP_datasets.png">
 <meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/decaNLP_examples.png">
+<meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/MQAN_output_answer.png">
+<meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/MQAN_adaption.png">
 <meta property="og:image" content="http://piiuo16g4.bkt.clouddn.com/MQAN.png">
-<meta property="og:updated_time" content="2018-12-04T08:27:12.425Z">
+<meta property="og:updated_time" content="2018-12-04T13:25:11.905Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NLP十项全能——通用NLP模型">
 <meta name="twitter:description" content="一.Paper TitleThe Natural Language Decathlon: Multitask Learning as Question Answering [arxiv 2018 work in progress]Published by Salesforce Research">
@@ -95,13 +97,18 @@
 <h1 id="二、Brief-Introduction"><a href="#二、Brief-Introduction" class="headerlink" title="二、Brief Introduction"></a>二、Brief Introduction</h1><h2 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h2><p>现有的很多深度学习模型在很多各自的NLP任务中取得了很大的进展，但是对于通用人工智能来说，处理NLP任务的趋势应该是有一个通用的模型</p>
 <h2 id="contribution"><a href="#contribution" class="headerlink" title="contribution"></a>contribution</h2><p>1.引入了NLP decathlon，包括了十种常见的NLP任务<br>2.通过把每个任务处理成question answering over a context,提出了multitask question answering network(MQAN)来学习decaNLP中的所有任务，不依赖任何task-specific modules或parameters<br>3.实验结果证明该模型在多个transfer learning的任务中都有所提升，其中mulit-pointer-generator decoder是成功的关键，以及采用anti-curriculum training strategy可以得到进一步的提升。<br>4.公开了模型代码，数据处理代码和实验代码</p>
 <h2 id="Core-Idea"><a href="#Core-Idea" class="headerlink" title="Core Idea"></a>Core Idea</h2><p>1.针对decaNLP任务涉及的MQAN多任务模型利用了新的dual coattention和multi-pointer-generator decoder来处理这里面的多个任务。<br>2.训练过程中，采用合适的anti-curriculum策略，可以取得在十个任务上分开训练的MQAN想匹敌的效果<br>3.pretrain的MQAN在这几个迁移学习任务中有很好的提升：machine translation and named entity recognition, domain adaptation for sentiment analysis and natural language inference, and zero-shot capabilities for text classification。</p>
-<h2 id="Experimental-Results"><a href="#Experimental-Results" class="headerlink" title="Experimental Results"></a>Experimental Results</h2><p>decaNLP包括的十个任务如下：<br><strong>Question Answering</strong><br><strong>Machine Translation</strong><br><strong>Summarization</strong><br><strong>Natural Language Inference</strong><br><strong>Sentiment Analysis</strong><br><strong>Semantic Role Labeling</strong><br><strong>Relation Extraction</strong><br><strong>Goal-Oriented Dialogue</strong><br><strong>Semantic Parsing</strong><br><strong>Pronoun Resolution</strong><br>各任务的数据集和评价指标如下图：<br><img src="http://piiuo16g4.bkt.clouddn.com/decaNLP_datasets.png" alt="decaNLP_datasets"></p>
+<h2 id="Experimental-Results"><a href="#Experimental-Results" class="headerlink" title="Experimental Results"></a>Experimental Results</h2><p>decaNLP包括的十个任务如下：<br><strong>Question Answering</strong>，<strong>Machine Translation</strong>，<strong>Summarization</strong>，<strong>Natural Language Inference</strong>，<strong>Sentiment Analysis</strong>(这几个任务都比较熟悉了)<br><strong>Semantic Role Labeling</strong>  给定一个句子和谓语(通常是一个动词)，确定‘who did what to whom,’ ‘when,’ and ‘where’.这个定义参考自《Dependency-based semantic role labeling of propbank》<br><strong>Relation Extraction</strong> 关系抽取系统处理的是unstructured text和从中提取到的relation<br><strong>Goal-Oriented Dialogue</strong> 对话状态追踪是目标导向的对话系统关键的组成部分。基于用户的utterance,action taken already,对话历史，预定义好的dialogue state去分析当前用户的请求<br><strong>Semantic Parsing</strong> WikiSQL dataset translate natural language questions into structured SQL queries so that users can interact with a database in natural language<br><strong>Pronoun Resolution</strong> 代词解析，比如说”Joan made sure to thank Susan for the help she had [given/received]. Who had [given/received] help? Susan or Joan?”<br>各任务的数据集和评价指标如下图：<br><img src="http://piiuo16g4.bkt.clouddn.com/decaNLP_datasets.png" alt="decaNLP_datasets"></p>
 <p>各任务处理成QA问题的示例如下：<br><img src="http://piiuo16g4.bkt.clouddn.com/decaNLP_examples.png" alt="decaNLP_examples"></p>
+<p>论文的baseline模型是pointer-generator的seq2seq模型，由于一般的QA任务认为答案都来自于context，和本文的任务有些不匹配，因为本文的不少NLP模型答案来自于question，所以需要考虑pointer-generator based on question。baseline直接把context和question concat起来，实验分别加上了self-attention,co-attention,question pointer。在十个任务上分别单独训练和multi-task learning。其中有些任务上有提升，有些有下降。具体结果就不在此贴出，参考价值有限。</p>
+<p>其他的一些分析还是比较有意思的，例如本文模型的关键是最后的multi-pointer-generator，模型的输出需要先判断是从context或者question中copy单词还是从词表里面生成单词，可想而知对不同的NLP任务这个判断也是会随之变化的。作者把这一结果做了可视化如下图所示：<br><img src="http://piiuo16g4.bkt.clouddn.com/MQAN_output_answer.png" alt="MQAN_output_answer"></p>
+<p>在decaNLP上预训练的MQAN对新任务的迁移效果怎么样呢？下图展示了在英文译捷克语和NER上的效果，可以看到使用很少的迭代次数和得到更好的结果。<br><img src="http://piiuo16g4.bkt.clouddn.com/MQAN_adaption.png" alt="MQAN_adaption"></p>
+<p>在Zero-shot domain adaptation for text classification 上处理的能力<br>作者主要在两个数据集上实验，一个是和MNLI相似的SNLI，Fine-tuning a MQAN pretrained on decaNLP achieves an 87% exact match score, which is a 2 point increase over training from a random initialization and 2 points from SOTA。另一个是Amazon and Yelp reviews: a MQAN pretrained on decaNLP achieves exact match scores of 82.1% and 80.8%, respectively, without any fine-tuning 。</p>
+<p>在训练过程中，作者采用了三种策略，一个是训练不加区分地训练十个任务；一个是用curriculum的方法来训练，先学习简单的任务，再学难的；还有一个就是anti-curriculum来训练，作者发现先用SQuAD训练，再训练剩下9个任务可以得到最好的效果。这个发现可以正式多任务学习训练过程中，不同任务的学习顺序对模型的性能是有影响的。</p>
 <h1 id="三、Main-Methology"><a href="#三、Main-Methology" class="headerlink" title="三、Main Methology"></a>三、Main Methology</h1><p>因为每个任务都被当作了问答问题，所以本文的模型名字就叫MQAN——multitask question answering network。每一个example都包含context，question和answer。<br>现有的很多成熟的QA模型总是认为答案可以从context中copy过来，但是很多情况question中的信息也很重要，会限制答案的空间。所以本文对《Dynamic coattention networks for question answering》中的coattention进行了扩展加入question来丰富input的representation。把《Get to the point: Summarization with pointer-generator networks》中的pointer-mechanism扩展成hierarchical, multi-pointer-generator，这样能够question和context中的信息直接进行copy。<br>模型图如下所示：<br><img src="http://piiuo16g4.bkt.clouddn.com/MQAN.png" alt="MQAN"></p>
 <p>输入有三个序列，长度为l的context c,长度为m的question q，长度为n的answer a。都表示成矩阵的形式，embedding的维度是$d_{emb}$</p>
 <script type="math/tex; mode=display">
 C \in \mathbb{R}^{l \times d_{emb}} \quad  Q \in \mathbb{R}^{m \times d_{emb}} \quad A \in \mathbb{R}^{n \times d_{emb}}</script><p>context和question矩阵经过encoder层变为$C_{fin} \in \mathbb{R}^{l \times d}$ 和$Q_{fin} \in \mathbb{R}^{m \times d}$，encoder层包括stack of deep reurrent,coattentive,self attentive layers。详细可见后面的附录部分。</p>
-<p><strong>Answer Representations</strong></p>
+<p><strong>Answer Representations</strong><br>映射加positional embedding</p>
 <script type="math/tex; mode=display">
 AW_2 = A_{proj} \in \mathbb{R}^{n \times d}</script><script type="math/tex; mode=display">
 PE[t,k]=\left\{
@@ -109,51 +116,51 @@ PE[t,k]=\left\{
 & sin(t/10000^{k/2d}) \quad k\ is\ even \\
 & cos(t/10000^{(k-1)/2d}) \quad k \ is\ odd
 \end{aligned}
-\right. \quad A_{proj} + PE = A_{ppr} \in \mathbb{R}^{n \times d}</script><p><strong>Multi-head Decoder Attention</strong></p>
+\right. \quad A_{proj} + PE = A_{ppr} \in \mathbb{R}^{n \times d}</script><p><strong>Multi-head Decoder Attention</strong><br>利用self-attention使得decoder is aware of previous outputs</p>
 <script type="math/tex; mode=display">
-MultiHead_A(A_{ppr},A_{ppr},A_{ppr}) = A_{mha} \in \mathbb{R}^{n \times d}</script><script type="math/tex; mode=display">
+MultiHead_A(A_{ppr},A_{ppr},A_{ppr}) = A_{mha} \in \mathbb{R}^{n \times d}</script><p>attention over the context to prepare for the next output</p>
+<script type="math/tex; mode=display">
 MultiHead_AC((A_{mha}+A_{ppr}),C_{fin},C_{fin}) = A_{ac} \in \mathbb{R}^{n \times d}</script><script type="math/tex; mode=display">
-FFN_A(A_{ac}+A_{mha}+A_{ppr})=A_{self} \in \mathbb{R}^{n \times d}</script><p><strong>Intermediate Decoder State</strong></p>
+FFN_A(A_{ac}+A_{mha}+A_{ppr})=A_{self} \in \mathbb{R}^{n \times d}</script><p><strong>Intermediate Decoder State</strong><br>标准的LSTM和atttention融合得到context在t时刻的循环状态</p>
 <script type="math/tex; mode=display">
-LSTM([(A_{self})_{t-1};\tilde(C_{t-1})],h_{t-1})=h_t \in \mathbb{R}^d</script><p><strong>Context and Question Attention</strong> </p>
+LSTM([(A_{self})_{t-1};\tilde(C_{t-1})],h_{t-1})=h_t \in \mathbb{R}^d</script><p><strong>Context and Question Attention</strong><br>用intermediate state得到context和question的attention weights，这样decoder可以在t时刻聚焦在相关的信息上。</p>
 <script type="math/tex; mode=display">
-softmax(C_{fin}(W_2h_t))=\alpha_t^C \in \mathbb{R}^l \quad softmax(Q_{fin}(W_3h_t))=\alpha_t^Q \in \mathbb{R}^m</script><p><strong>Recurrent Context State</strong></p>
+softmax(C_{fin}(W_2h_t))=\alpha_t^C \in \mathbb{R}^l \quad softmax(Q_{fin}(W_3h_t))=\alpha_t^Q \in \mathbb{R}^m</script><p><strong>Recurrent Context State</strong><br>context表示和weight一起经过一个前馈网络得到recurrent context state 和 question state</p>
 <script type="math/tex; mode=display">
-tanh(W_4[C_{fin}^T\alpha_t^C;h_t])=\tilde{c_t} \in \mathbb{R}^d \quad tanh(W_5[Q_{fin}^T\alpha_t^Q;h_t])=\tilde{q_t} \in \mathbb{R}^d</script><p><strong>Multi-Pointer-Generator</strong></p>
+tanh(W_4[C_{fin}^T\alpha_t^C;h_t])=\tilde{c_t} \in \mathbb{R}^d \quad tanh(W_5[Q_{fin}^T\alpha_t^Q;h_t])=\tilde{q_t} \in \mathbb{R}^d</script><p><strong>Multi-Pointer-Generator</strong><br>模型必须能够有能力生成不在context或者question中的词，所以需要能够把vocabulary作为备选集。以下分别得到n distributions over tokens in the context, question和 this external vocabulary</p>
 <script type="math/tex; mode=display">
 \sum_{i:c_i=w_t}(\alpha_t^C)_i = p_c(w_t) \in \mathbb{R}^n \quad \sum_{i:q_i=w_t}(\alpha_t^Q)_i = p_q(w_t) \in \mathbb{R}^m</script><script type="math/tex; mode=display">
-softmax(W_v\tilde{c_t})=p_v(w_t) \in \mathbb{R}^v</script><script type="math/tex; mode=display">
+softmax(W_v\tilde{c_t})=p_v(w_t) \in \mathbb{R}^v</script><p>最终这三个分布合并成最终的output distribution</p>
+<script type="math/tex; mode=display">
 \sigma(W_{pv}[\tilde{c_t};h_t;(A_{self})_{t-1}])=\gamma \in [0,1] \quad \sigma(W_{cq}[\tilde{q_t};h_t;(A_{self})_{t-1}])=\lambda \in [0,1]</script><script type="math/tex; mode=display">
-\gamma p_v(w_t) + (1-\gamma)[\lambda p_c(w_t) + (1-\lambda)p_q(w_t)] = p(w_t) \in \mathbb{R}^{l+m+v}</script><h1 id="四、Related-Work"><a href="#四、Related-Work" class="headerlink" title="四、Related Work"></a>四、Related Work</h1><p><strong>Transfer Learning in NLP</strong></p>
-<p><strong>Multitask Learning in NLP</strong></p>
-<p><strong>Optimization and Catatrophic Forgetting</strong></p>
-<p><strong>Meta-Learning</strong></p>
+\gamma p_v(w_t) + (1-\gamma)[\lambda p_c(w_t) + (1-\lambda)p_q(w_t)] = p(w_t) \in \mathbb{R}^{l+m+v}</script><h1 id="四、Related-Work"><a href="#四、Related-Work" class="headerlink" title="四、Related Work"></a>四、Related Work</h1><p><strong>Transfer Learning in NLP</strong><br>Most success in making use of the relatedness between natural language tasks stem from transfer learning。代表性的有word2vec,skip-thought vector,Glove<br><strong>Multitask Learning in NLP</strong><br>《Natural language processing (almost) from scratch》：chunking, POS tagging, NER,and SRL<br>《A joint many-task model: Growing a neural network for multiple NLP tasks》：dependency parsing, semantic relatedness, and natural language inference<br>《Google’s multilingual neural machine translation system: Enabling zero-shot translation》:处理多个机器翻译任务，可以做zero-shot的翻译<br><strong>Optimization and Catatrophic Forgetting</strong><br>Multitask learning涉及了很多optimization问题，这些问题不仅仅在NLP的范畴。比如很多工作为了减少 catastrophic forgetting去惩罚在训练训任务时的参数与之前参数的difference。<br>MQAN在Multitask setting上取得了对比single-task setting接近甚至更好的效果,而联合训练的参数量远远小于每个任务单独训练的MQAN参数的总合。这说明MQAN在multitask setting中有效地利用了训练参数去pack and share参数。这样，MQAN可以一定程度上限制catastrophic forgetting<br><strong>Meta-Learning</strong><br>Meta-learning的目标是通过在各种各样的任务上训练模型，可以很容易学习新的任务。过去的工作有如果去学习rules for learning或者train meta-agent控制参数的更新，通过特殊的memory机制增强模型和maximize the degree to<br>which models can learn new tasks</p>
 <h1 id="五、Appendix"><a href="#五、Appendix" class="headerlink" title="五、Appendix"></a>五、Appendix</h1><p>项目地址：<a href="https://decanlp.com/" target="_blank" rel="noopener">https://decanlp.com/</a></p>
-<h3 id="MQAN-Encoder"><a href="#MQAN-Encoder" class="headerlink" title="MQAN Encoder"></a>MQAN Encoder</h3><p><strong>Independent Encoding</strong></p>
+<h3 id="MQAN-Encoder"><a href="#MQAN-Encoder" class="headerlink" title="MQAN Encoder"></a>MQAN Encoder</h3><p><strong>Independent Encoding</strong><br>Context和Question分别建模</p>
 <script type="math/tex; mode=display">
 CW_1=C_{proj} \in \mathbb{R}^{l \times d} \quad QW_1=Q_{proj} \in \mathbb{R}^{m \times d}</script><p>共享双向LSTM</p>
 <script type="math/tex; mode=display">
 BiLSTM_{ind}(C_{proj})=C_{ind} \in \mathbb{R}^{l \times d} \quad BiLSTM_{ind}(Q_{proj})=Q_{ind} \in \mathbb{R}^{m \times d}</script><p><strong>Alignment</strong></p>
 <script type="math/tex; mode=display">
-softmax(C_{ind}Q_{ind}^T)=S_{cq} \in \mathbb{R}^{(l+1) \times (m+1)} \quad softmax(Q_{ind}C_{ind}^T)=S_{qc} \in \mathbb{R}^{(m+1) \times (l+1)}</script><p>维度变为l+1,m+1是因为在$C_{ind}$和$Q_{ind}$上加上了separate trained, dummy embeddings<br><strong>Dual Coattention</strong></p>
+softmax(C_{ind}Q_{ind}^T)=S_{cq} \in \mathbb{R}^{(l+1) \times (m+1)} \quad softmax(Q_{ind}C_{ind}^T)=S_{qc} \in \mathbb{R}^{(m+1) \times (l+1)}</script><p>维度变为l+1,m+1是因为在$C_{ind}$和$Q_{ind}$上加上了separate trained, dummy embeddings<br><strong>Dual Coattention</strong><br>These alignments are used to compute weighted summations of the information from one sequence that is relevant to a single token in the other</p>
 <script type="math/tex; mode=display">
 S_{cq}^TC_{ind}=C_{sum} \in \mathbb{R}^{(m+1) \times d} \quad S_{qc}^TQ_{ind}=Q_{sum} \in \mathbb{R}^{(l+1) \times d}</script><script type="math/tex; mode=display">
-S_{qc}^TC_{sum}=C_{coa} \in \mathbb{R}^{(l+1) \times d} \quad S_{cq}^TQ_{sum}=Q_{coa} \in \mathbb{R}^{(m+1) \times d}</script><p><strong>Compression</strong></p>
+S_{qc}^TC_{sum}=C_{coa} \in \mathbb{R}^{(l+1) \times d} \quad S_{cq}^TQ_{sum}=Q_{coa} \in \mathbb{R}^{(m+1) \times d}</script><p><strong>Compression</strong><br>这一步是把前面dual attention得到的结果给处理成more manageable dimension</p>
 <script type="math/tex; mode=display">
 BiLSTM_{comC}([C_{proj};C_{ind};Q_{sum};C_{coa}])=C_{com} \in \mathbb{R}^{l \times d}</script><script type="math/tex; mode=display">
-BiLSTM_{comQ}([Q_{proj};Q_{ind};C_{sum};Q_{coa}])=Q_{com} \in \mathbb{R}^{m \times d}</script><p><strong>Self-Attention</strong></p>
+BiLSTM_{comQ}([Q_{proj};Q_{ind};C_{sum};Q_{coa}])=Q_{com} \in \mathbb{R}^{m \times d}</script><p><strong>Self-Attention</strong><br>这里就是self-attention加前馈神经网络</p>
 <script type="math/tex; mode=display">
 Attention(\tilde{X},\tilde{Y},\tilde{Z})=softmax \left(\frac {\tilde{X}\tilde{Y}^T}{\sqrt{d}} \right)\tilde{Z}</script><script type="math/tex; mode=display">
 MultiHead(X,Y,Z)=[h_1;...;h_p]W_o \quad where\  h_j=Attention(XW_j^X,YW_j^Y,ZW_j^Z)</script><script type="math/tex; mode=display">
 MultiHead_C(C_{com},C_{com},C_{com}) = C_{mha} \quad MultiHead_Q(Q_{com},Q_{com},Q_{com}) = Q_{mha}</script><script type="math/tex; mode=display">
 FFN(X)=max(0,XU)V+X</script><script type="math/tex; mode=display">
-FFN_C(C_{com}+C_{mha})=C_{elf} \in \mathbb{R}^{l \times d} \quad FFN_Q(Q_{com}+Q_{mha})=Q_{elf} \in \mathbb{R}^{m \times d}</script><p><strong>Final Encoding</strong></p>
+FFN_C(C_{com}+C_{mha})=C_{elf} \in \mathbb{R}^{l \times d} \quad FFN_Q(Q_{com}+Q_{mha})=Q_{elf} \in \mathbb{R}^{m \times d}</script><p><strong>Final Encoding</strong><br>Finally, we aggregate all of this information across time with two BiLSTMs</p>
 <script type="math/tex; mode=display">
-BiLSTM_{finC}(C_{self})=C_{fin} \in \mathbb{R}^{l \times d} \quad BiLSTM_{finQ}(Q_{self})=Q_{fin} \in \mathbb{R}^{m \times d}</script><h3 id="Curriculum-Learning"><a href="#Curriculum-Learning" class="headerlink" title="Curriculum Learning"></a>Curriculum Learning</h3>
+BiLSTM_{finC}(C_{self})=C_{fin} \in \mathbb{R}^{l \times d} \quad BiLSTM_{finQ}(Q_{self})=Q_{fin} \in \mathbb{R}^{m \times d}</script><p>这些矩阵随后就给到decoder去生成答案。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/12/03/decaNLP/" data-id="cjp9hjjdp0003lzajrez7z96h" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/12/03/decaNLP/" data-id="cjp9s0emw000kydajy2zj6uwl" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/paper/">paper</a></li></ul>
