@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Sakya Personal Blog">
 <meta property="og:description" content="Task描述：自然语言处理中语义匹配是一个核心问题，该技术经常被用于信息检索、阅读理解，问答系统等等。input就是两个sentence，数据就是两句话的matching score，可以视为分类或者排序的任务。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-12-18T11:43:49.544Z">
+<meta property="og:updated_time" content="2018-12-21T13:03:43.300Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="semantic_matching_Toturial">
 <meta name="twitter:description" content="Task描述：自然语言处理中语义匹配是一个核心问题，该技术经常被用于信息检索、阅读理解，问答系统等等。input就是两个sentence，数据就是两句话的matching score，可以视为分类或者排序的任务。">
@@ -93,7 +93,7 @@
 </ul>
 <p>本文主要关注的是基于深度学习的方法，其他的传统的方法不在讨论范围<br>深度学习算法做语义匹配主要分为两大类：<br>1）representation based model：DSSM，CDSSM，ARC-I，CNTN<br>2）interaction based model：ARC-II，MatchingPyramid，DRMM，MIX<br>其中涉及到的模型后续有空的话会补上相关论文的解读，这里只是简单的举一些典型的例子，相关模型其实很多，就不再一一列举。<br>其实基于表示和交互的方法有时候并没有严格的分界线，绝大多数只是侧重的部分不同，比如基于表示的方法就是represent block is more complex than interaction matrix computation</p>
 <h2 id="Model"><a href="#Model" class="headerlink" title="Model"></a>Model</h2><p><strong>DSSM</strong>: Learning Deep Structured Semantic Models for Web Search using Clickthrough Data[CIKM 2013]<br><strong>CDSSM</strong>: A latent semantic model with convolutional-pooling structure for information retrieval[CIKM 2014]<br><strong>ARC-I/ARC-II</strong>: Convolutional Neural Network Architectures for Matching Natural Language Sentences[NIPS 2014]<br><strong>CNTN</strong>: Convolutional Neural Tensor Network Architecture for Community-Based Question Answering[IJCAI 2015]<br><strong>LSTM-RNN</strong>: Deep Sentence Embedding Using the Long Short Term Memory Network: Analysis and Application to Information Retrieval[TASLP 2016]<br><strong>MultiGranCNN</strong>: MultiGranCNN: An Architecture for General Matching of Text Chunks on Multiple Levels of Granularity[ACL 2015]</p>
-<p><strong>MatchPyramid</strong>: Text Matching as Image Recognition[AAAI 2016]<br><strong>MV-LSTM</strong>: A Deep Architecture for Semantic Matching with Multiple Positional Sentence Representations[AAAI 2016]<br><strong>Match-SRNN</strong>: Match-SRNN: Modeling the Recursive Matching Structure with Spatial RNN[IJCAI 2016]<br><strong>K-NRM</strong>: End-to-End Neural Ad-hoc Ranking with Kernel Pooling[SIGIR 2017]<br><strong>Conv-KNRM</strong>: Convolutional Neural Networks for Soft-Matching N-Grams in Ad-hoc Search[WSDM 2018]<br><strong>Decomposable Attention Model</strong>: A Decomposable Attention Model for Natural Language Inference[EMNLP 2016]<br><strong>DRMM</strong>:  A Deep Relevance Matching Model for Ad-hoc Retrieval[CIKM 2016]<br><strong>DeepRank</strong>: DeepRank: a New Deep Architecture for Relevance Ranking in Information Retrieval[CIKM 2017]<br><strong>MIX: MIX</strong>: Multi-Channel Information Crossing for Text Matching[KDD 2018]<br><strong>DIIN</strong>: Natural Language Inference over interaction space[ICLR 2018]<br><strong>BiMPM</strong>: Bilateral Multi-Perspective Matching for Natural Language Sentences[IJCAI 2017]<br><strong>AdaQA</strong>: Learning Context-Sensitive Convolutional Filters for Text Processing[EMNLP 2018]<br><strong>hybrid of ConvNet and BiLSTM</strong>: Pairwise Word Interaction Modeling with Deep Neural Networks for Semantic Similarity Measurement[NAACL-HLT 2016]<br><strong>ABCNN</strong>: ABCNN: Attention-Based Convolutional Neural Network for Modeling Sentence Pairs[TACL 2016]</p>
+<p><strong>MatchPyramid</strong>: Text Matching as Image Recognition[AAAI 2016]<br><strong>MV-LSTM</strong>: A Deep Architecture for Semantic Matching with Multiple Positional Sentence Representations[AAAI 2016]<br><strong>Match-SRNN</strong>: Match-SRNN: Modeling the Recursive Matching Structure with Spatial RNN[IJCAI 2016]<br><strong>K-NRM</strong>: End-to-End Neural Ad-hoc Ranking with Kernel Pooling[SIGIR 2017]<br><strong>Conv-KNRM</strong>: Convolutional Neural Networks for Soft-Matching N-Grams in Ad-hoc Search[WSDM 2018]<br><strong>Decomposable Attention Model</strong>: A Decomposable Attention Model for Natural Language Inference[EMNLP 2016]<br><strong>DRMM</strong>:  A Deep Relevance Matching Model for Ad-hoc Retrieval[CIKM 2016]<br><strong>DeepRank</strong>: DeepRank: a New Deep Architecture for Relevance Ranking in Information Retrieval[CIKM 2017]<br><strong>MIX: MIX</strong>: Multi-Channel Information Crossing for Text Matching[KDD 2018]<br><strong>DIIN</strong>: Natural Language Inference over interaction space[ICLR 2018]<br><strong>BiMPM</strong>: Bilateral Multi-Perspective Matching for Natural Language Sentences[IJCAI 2017]<br><strong>AdaQA</strong>: Learning Context-Sensitive Convolutional Filters for Text Processing[EMNLP 2018]<br><strong>hybrid of ConvNet and BiLSTM</strong>: Pairwise Word Interaction Modeling with Deep Neural Networks for Semantic Similarity Measurement[NAACL-HLT 2016]<br><strong>ABCNN</strong>: ABCNN: Attention-Based Convolutional Neural Network for Modeling Sentence Pairs[TACL 2016]<br><strong>ESIM</strong>: Enhancing and Combining Sequential and Tree LSTM for Natural Language Inference[ACL 2017]</p>
 <hr>
 <p><strong>Language Model</strong>:<br><strong>TextCNN</strong>: Convolutional Neural Networks for Sentence Classification[EMNLP 2014]<br><strong>Char-CNN</strong>: Character-level Convolutional Networks for Text Classification[NIPS 2015]<br><strong>Transformer</strong>: Attention is All you Need[NIPS 2017]<br><strong>QRNN</strong>: QUASI-RECURRENT NEURAL NETWORKS[ICLR 2017]<br><strong>SRU</strong>: Simple Recurrent Units for Highly Parallelizable Recurrence[ACL 2018]<br><strong>SRNN</strong>: Sliced Recurrent Neural Networks[COLING 2018]<br><strong>Sentence-State LSTM</strong>: Sentence-State LSTM for Text Representation[ACL 2018]<br><strong>TCN</strong>: An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling[arXiv 2018]<br><strong>ELMO</strong>: Deep contextualized word representations[NAACL 2018]<br><strong>OpenAI GPT</strong>: Improving Language Understanding by Generative Pre-Training[OpenAI Technical report 2018]<br><strong>BERT</strong>: BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding[arXiv 2018]<br><strong>Trellis</strong>: Trellis Networks for Sequence Modeling[arXiv 2018]<br><strong>Bi-BloSAN</strong>: Bi-Directional Block Self-attention for fast and memory-efficient sequence modeling[ICLR 2018]<br><strong>MQAN</strong>: The Natural Language Decathlon: Multitask Learning as Question Answering[arXiv 2018]</p>
 <h3 id="Link"><a href="#Link" class="headerlink" title="Link"></a>Link</h3><ul>
@@ -109,7 +109,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/11/14/semantic-matching-Toturial/" data-id="cjptok60500057wajoyctqmql" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/11/14/semantic-matching-Toturial/" data-id="cjpy1qf6q00058zaj5ju2xknb" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/share/">share</a></li></ul>
@@ -241,5 +241,22 @@
 
 
   </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<!--script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
 </body>
 </html>
