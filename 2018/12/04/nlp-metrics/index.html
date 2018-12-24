@@ -7,18 +7,18 @@
   
   <title>NLP任务中常用的评价指标汇总 | Sakya Personal Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="这篇博客主要是汇总NLP任务中经常涉及到的一些评价指标的含义和计算方法">
+  <meta name="description" content="这篇博客主要是汇总NLP任务中经常涉及到的一些评价指标的含义和计算方法，评价指标是否科学可行直接影响着这个领域能否进入良性循环的研究方向。">
 <meta name="keywords" content="algorithm">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NLP任务中常用的评价指标汇总">
 <meta property="og:url" content="http://yoursite.com/2018/12/04/nlp-metrics/index.html">
 <meta property="og:site_name" content="Sakya Personal Blog">
-<meta property="og:description" content="这篇博客主要是汇总NLP任务中经常涉及到的一些评价指标的含义和计算方法">
+<meta property="og:description" content="这篇博客主要是汇总NLP任务中经常涉及到的一些评价指标的含义和计算方法，评价指标是否科学可行直接影响着这个领域能否进入良性循环的研究方向。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-12-04T08:32:09.537Z">
+<meta property="og:updated_time" content="2018-12-24T09:05:27.954Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NLP任务中常用的评价指标汇总">
-<meta name="twitter:description" content="这篇博客主要是汇总NLP任务中经常涉及到的一些评价指标的含义和计算方法">
+<meta name="twitter:description" content="这篇博客主要是汇总NLP任务中经常涉及到的一些评价指标的含义和计算方法，评价指标是否科学可行直接影响着这个领域能否进入良性循环的研究方向。">
   
     <link rel="alternate" href="/atom.xml" title="Sakya Personal Blog" type="application/atom+xml">
   
@@ -87,12 +87,63 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>这篇博客主要是汇总NLP任务中经常涉及到的一些评价指标的含义和计算方法<br><a id="more"></a></p>
-<h1 id="GOUGE"><a href="#GOUGE" class="headerlink" title="GOUGE"></a>GOUGE</h1><h1 id="BLUE"><a href="#BLUE" class="headerlink" title="BLUE"></a>BLUE</h1><h1 id="EM"><a href="#EM" class="headerlink" title="EM"></a>EM</h1><h1 id="Perplexity"><a href="#Perplexity" class="headerlink" title="Perplexity"></a>Perplexity</h1><h1 id="DGCN"><a href="#DGCN" class="headerlink" title="DGCN"></a>DGCN</h1><h1 id="MAP"><a href="#MAP" class="headerlink" title="MAP"></a>MAP</h1><h1 id="MRR"><a href="#MRR" class="headerlink" title="MRR"></a>MRR</h1>
+        <p>这篇博客主要是汇总NLP任务中经常涉及到的一些评价指标的含义和计算方法，评价指标是否科学可行直接影响着这个领域能否进入良性循环的研究方向。<br><a id="more"></a></p>
+<h1 id="BLEU"><a href="#BLEU" class="headerlink" title="BLEU"></a>BLEU</h1><p>BLEU(Bilingual Evaluation Understudy)是一种流行的机器翻译评价指标，用于分析候选译文和参考译文中n元组共同出现的程度。IBM在ACL 2002上提出(<a href="https://www.aclweb.org/anthology/P02-1040.pdf" target="_blank" rel="noopener">https://www.aclweb.org/anthology/P02-1040.pdf</a>)<br>一般的，一个给定源语句，会有很多perfect翻译结果，区别于文字选择or文字顺序。通过比较候选结果与参考结果的N-gram 匹配个数，就可以简单对候选结果进行rank。BLEU实现的首要任务是比较候选翻译结果的N-gram与参考结果的N-gram匹配的个数。这些匹配是位置独立的position-independent，匹配个数越多，说明候选翻译越好。为了简单首先考虑unigram的匹配。</p>
+<p><strong>Modified n-gram precision</strong><br>简单的：precision=match words(unigrams) in any reference / total words in Candidate<br>But：MT系统能够过度的生成一些看事合理reasonable但是实际不合适的Word，而按照上述方法往往会得到高准确率high-precision，例如：<br>Candidate: the the the the the the the.<br>Reference 1: The cat is on the mat.<br>Reference 2: There is a cat on the mat.<br>按上述简单方法计算准确率是7/7<br>因此，需要modified unigram precision（思路：在reference中剔除已经匹配过的word），按如下步骤<br>A）计算word在任何一个参考翻译结果中出现的最大次数Max_Ref_Count<br>B）修正分子：clipped Count = min(Count, Max_Ref_Count)<br>C）计算modified unigram precision = Sum（clipped Count）/ total candidate words<br>于是：the modified unigram precision is 2/7<br>modified n-gram precision捕获了2方面指标：adequacy 和 fluency<br>adequacy：候选与参考中相同的words（1-grams）<br>fluency：the longer n-gram matches</p>
+<p>所以最终的公式如下，其中c表示the length of the candidate translation，r be the effective reference corpus length。</p>
+<script type="math/tex; mode=display">
+BLEU = BP \cdot exp \left( \sum_{n=1}^{N}w_nlogPp_n \right)</script><script type="math/tex; mode=display">
+BP=\left\{
+\begin{aligned}
+1 \quad & if\ c > r \\
+e^{(1-r/c)} \quad & if\ c \leq r 
+\end{aligned}
+\right.</script><script type="math/tex; mode=display">
+p_n=\frac{\sum_{C \in {Candidates}}\sum_{n-gram \in C} Count_{clip}(n-gram)}{\sum_{C' \in {Candidates}}\sum_{n-gram' \in C'} Count(n-gram')}</script><script type="math/tex; mode=display">
+\log BLEU = min(1-\frac{r}{c},0)+\sum_{n=1}^{N}w_nlogPp_n</script><p>BLEU打分的取值范围[0,1]。除非翻译结果与某个reference结果完全一致，否则很难获得1分，因此，往往人工翻译结果也不一定是1分。<br>值得注意的是：每个源语句对应的reference结果越多，BLEU的得分也会越高。因此在比较不同翻译结果好坏时，要确保在相同的reference translation个数的语料集合上。</p>
+<h1 id="ROUGE"><a href="#ROUGE" class="headerlink" title="ROUGE"></a>ROUGE</h1><p>ROUGE(Recall-Oriented Understudy for Gisting Evaluation)，提出于ACL 2004(<a href="https://www.aclweb.org/anthology/W/W04/W04-1013.pdf" target="_blank" rel="noopener">https://www.aclweb.org/anthology/W/W04/W04-1013.pdf</a>)<br>是文本摘要中最常用的评价方法。ROUGE受到了机器翻译自动评价方法BLEU的启发，不同之处在于，采用召回率来作为指标。基本思想是将模型生成的摘要与参考摘要的n元组贡献统计量作为评判依据。<br>ROUGE包括以下四种，ROUGE-N,ROUGE-L,ROUGE-W,ROUGE-S:<br>| Metric      | Description |<br>| —————- | —————- |<br>|ROUGE-N|基于N-gram共现性统计|<br>|ROUGE-L|基于最长共有子句共现性精确度和召回率Fmeasure统计|<br>|ROUGE-W|带权重的最长公有子句共现性精确度和召回率Fmeasure统计|<br>|ROUGE-S|不连续二元组共线性精确度和召回率Fmeasure统计|</p>
+<h3 id="ROUGE-N-N-gram-Co-Occurrence-Statistics"><a href="#ROUGE-N-N-gram-Co-Occurrence-Statistics" class="headerlink" title="ROUGE-N:: N-gram Co-Occurrence Statistics"></a>ROUGE-N:: N-gram Co-Occurrence Statistics</h3><p>Formally, ROUGE-N is an n-gram recall between a candidate summary and a set of reference summaries.ROUGE-N is computed as follows:</p>
+<script type="math/tex; mode=display">
+ROUGE-N = \frac{\sum_{S \in ReferemceSummaries}\sum_{gram_n \in S}Count_{match}(gram_n)}{\sum_{S \in ReferemceSummaries}\sum_{gram_n \in S}Count(gram_n)}</script><p><strong>优点</strong>：直观，简洁，能反映词序。<br><strong>缺点</strong>：区分度不高，且当N&gt;3时，ROUGE-N值通常很小<br><strong>应用场景</strong>：ROUGE-1：短摘要评估，多文档摘要（去停用词条件）;<br>ROUGE-2: 单文档摘要，多文档摘要（去停用词条件）;</p>
+<h3 id="ROUGE-L-Longest-Common-Subsequence"><a href="#ROUGE-L-Longest-Common-Subsequence" class="headerlink" title="ROUGE-L: Longest Common Subsequence"></a>ROUGE-L: Longest Common Subsequence</h3><script type="math/tex; mode=display">
+R_{lcs} = \frac{LCS(X,Y)}{m}</script><script type="math/tex; mode=display">
+P_{lcs} = \frac{LCS(X,Y)}{n}</script><script type="math/tex; mode=display">
+F_{lcs} = \frac{(1 + \beta^2)R_{lcs}P{lcs}}{R_{lcs}+\beta^2P_{lcs}}</script><p>其中LCS(X,Y)表示X和Y的最长公共子序列的长度，X和Y的长度分别为m和n，$\beta=\frac{P_{lcs}}{R_{lcs}}$ 。$\beta$如果很大的话，只有$R_{lcs}$起作用。</p>
+<p><strong>优点</strong>：不要求词的连续匹配，只要求按词的出现顺序匹配即可，能够像n-gram一样<br>反映句子级的词序。<br>自动匹配最长公共子序列，不需要预先定义n-gram的长度。<br><strong>缺点</strong>：只计算一个最长子序列，最终的值忽略了其他备选的最长子序列及较短子序列的影响。<br><strong>应用场景</strong>：单文档摘要；短摘要评估。</p>
+<h3 id="ROUGE-W-Weighted-Longest-Common-Subsequence"><a href="#ROUGE-W-Weighted-Longest-Common-Subsequence" class="headerlink" title="ROUGE-W: Weighted Longest Common Subsequence"></a>ROUGE-W: Weighted Longest Common Subsequence</h3><p>基本的最长公共子序列有缺陷那就是不能区分子序列的空间关系(论文原话：the basic LCS also has a problem that it does not differentiate LCSes of different spatial relations within their embedding sequences)。<br>举个例子，reference 序列X，candidates序列Y1，Y2：<br>X: [A B C D E F G]<br>Y1: [A B C D H I K]<br>Y2: [A H B K C I D]</p>
+<p>Y1和Y2有相同的ROUGE-L score，但是Y1应该是更好的那个，因为Y1有连续的匹配(consecutive matches)。所以为了提升评测的有效性，利用k来记录目前连续匹配的长度。给定两个序列X和Y，X和Y的WLCS score可以通过下面的动态规划过程计算：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">(1) For (i = 0; i &lt;=m; i++)</span><br><span class="line">      c(i,j) = 0 // initialize c-table</span><br><span class="line">      w(i,j) = 0 // initialize w-table</span><br><span class="line">(2) For (i = 1; i &lt;= m; i++)</span><br><span class="line">      For (j = 1; j &lt;= n; j++)</span><br><span class="line">      If xi = yj Then</span><br><span class="line">      // the length of consecutive matches at</span><br><span class="line">      // position i-1 and j-1</span><br><span class="line">      k = w(i-1,j-1)</span><br><span class="line">      c(i,j) = c(i-1,j-1) + f(k+1) – f(k)</span><br><span class="line">      // remember the length of consecutive</span><br><span class="line">      // matches at position i, j</span><br><span class="line">      w(i,j) = k+1</span><br><span class="line">      Otherwise</span><br><span class="line">        If c(i-1,j) &gt; c(i,j-1) Then</span><br><span class="line">          c(i,j) = c(i-1,j)</span><br><span class="line">          w(i,j) = 0 // no match at i, j</span><br><span class="line">        Else c(i,j) = c(i,j-1)</span><br><span class="line">          w(i,j) = 0 // no match at i, j</span><br><span class="line">(3) WLCS(X,Y) = c(m,n)</span><br></pre></td></tr></table></figure></p>
+<p><strong>优点</strong>：同一LCS下，对连续匹配词数多的句子赋予更高权重，比LCS区分度更高。<br><strong>缺点</strong>：同ROUGE-L，只计算一个最长子序列，最终的值忽略了其他备选的最长子序列及较短子序列的影响。<br><strong>应用场景</strong>：单文档摘要；短摘要评估。</p>
+<h3 id="ROUGE-S-Skip-Bigram-Co-Occurrence-Statistics"><a href="#ROUGE-S-Skip-Bigram-Co-Occurrence-Statistics" class="headerlink" title="ROUGE-S: Skip-Bigram Co-Occurrence Statistics"></a>ROUGE-S: Skip-Bigram Co-Occurrence Statistics</h3><p>Skip-bigram is any pair of words in their sentence order, allowing for arbitrary gaps.skip-bigram共现统计特征评测的是candidate翻译和a set of reference翻译之间的overlap。<br>举例:<br>S1. police killed the gunman<br>S2. police kill the gunman<br>S3. the gunman kill police<br>S4. the gunman police killed<br>每个句子有C(4,2)=6个skip-bigrams。比如S1的6个skip-bigrams是(“police killed”, “police the”, “police gunman”,“killed the”, “killed gunman”, “the gunman”).S2 has three skip-bigram matches with S1 (“police the”, “police gunman”, “the gunman”), S3 has one skip-bigram match with S1 (“the gunman”), and S4 has two skip-bigram matches with S1 (“police killed”, “the gunman”).<br>给定翻译分别是长度为m的X和长度为n的Y，skip-bigram-based F-measure的计算如下：</p>
+<script type="math/tex; mode=display">
+R_{skip2} = \frac{SKIP2(X,Y)}{C(m,2)}</script><script type="math/tex; mode=display">
+P_{skip2} = \frac{SKIP2(X,Y)}{C(n,2)}</script><script type="math/tex; mode=display">
+F_{skip2} = \frac{(1+\beta^2)R_{skip2}P_{skip2}}{R_{skip2}+\beta^2P_{skip2}}</script><p>其中，SKIP2表示X和Y之间匹配的skip-bigram的个数，C是combination function。<br><strong>优点</strong>：考虑了所有按词序排列的词对，比n-gram模型更深入反映句子级词序。<br><strong>缺点</strong>：若不设定最大跳跃词数会出现很多无意义词对。若设定最大跳跃词数，需要指定最大跳跃词数的值。<br><strong>应用场景</strong>：单文档摘要；ROUGE-S4，ROUGE-S9: 多文档摘要（去停用词条件)。</p>
+<p>总的来说，ROUGE有如下优势：参考译文越多，则证明带评测译文的ROUGE与人类评测越相关，同理带评测译文越多，相关性也越高。单文件任务比多文件任务的关联性更大。</p>
+<h1 id="Meteor"><a href="#Meteor" class="headerlink" title="Meteor"></a>Meteor</h1><p>Meteor(Metric for Evaluation of Translation with Explicit ORdering)在ACL 2014 workshop上公布，是基于BLEU进行了一些改进，加入了生成响应和真实响应之间的对其关系。使用WordNet计算特定的序列匹配，同义词，词根和词缀，释义之间的匹配关系，改善了BLEU的效果，使其跟人工判别共更强的相关性。同样也是使用F-measure的计算方法，如下图所示，具体可以参考论文《Meteor universal: Language specific translation evaluation for any target language》<br>计算METEOR需要预先给定一组校准(alignment)m，而这一校准基于WordNet的同义词库，通过最小化对应语句中连续有序的块(chunks)ch来得出<br>则METEOR计算为对应最佳候选译文和参考译文之间的准确率和召回率的调和平均： </p>
+<script type="math/tex; mode=display">
+Pen=\gamma\left(\frac{ch}{m} \right)^\theta</script><script type="math/tex; mode=display">
+F_{mean}=\frac{P_mR_m}{\alpha P_m+(1-\alpha)R_m}</script><script type="math/tex; mode=display">
+P_m=\frac{|m|}{\sum_kh_k(c_i)}</script><script type="math/tex; mode=display">
+R_m=\frac{|m|}{\sum_kh_k(s_{ij})}</script><script type="math/tex; mode=display">
+METEOR=(1-Pen)F_{mean}</script><p>其中，$\alpha$，$\gamma$,$\theta$都是用于评价的默认参数。因此，METEOR的最终评价基于块(chunk)的分解匹配和表征分解匹配质量的一个调和平均，并包含一个惩罚系数Pen。 和BLEU不同，METEOR同时考虑了基于整个语料库上的准确率和召回率，而最终得出测度。</p>
+<h1 id="Perplexity"><a href="#Perplexity" class="headerlink" title="Perplexity"></a>Perplexity</h1><p>PPL是用在自然语言处理领域（NLP）中，衡量语言模型好坏的指标。<br>困惑度（perplexity）的基本思想是：给测试集的句子赋予较高概率值的语言模型较好,当语言模型训练完之后，测试集中的句子都是正常的句子，那么训练好的模型就是在测试集上的概率越高越好。<br>它主要是根据每个词来估计一句话出现的概率，并用句子长度作normalize，公式为</p>
+<script type="math/tex; mode=display">
+PP(S) = P(w_1w_2,...,w_N)^{-\frac{1}{N}}=\sqrt[N]{\frac{1}{P(w_1w_2,...,w_N)}}=\sqrt[N]{\prod_{i=1}^{N}\frac{1}{p(w_i|w_1w_2,...,w_{i-1})}}</script><p>S代表sentence，N是句子长度，$p(w_i)$是第i个词的概率。这个式子可以这样理解，PPL越小，p(wi)则越大，一句我们期望的sentence出现的概率就越高。<br>由公式可知，<strong>句子概率越大，语言模型越好，迷惑度越小</strong>。<br>另一种表达：</p>
+<script type="math/tex; mode=display">
+PP(S)=2^{-\frac{1}{N}\sum \log (P(w_i))}</script><p><strong>Perplexity的影响因素</strong></p>
+<ol>
+<li><p>训练数据集越大，PPL会下降得更低，1billion dataset和10万dataset训练效果是很不一样的；</p>
+</li>
+<li><p>数据中的标点会对模型的PPL产生很大影响，一个句号能让PPL波动几十，标点的预测总是不稳定；</p>
+</li>
+<li><p>预测语句中的“的，了”等词也对PPL有很大影响，可能“我借你的书”比“我借你书”的指标值小几十，但从语义上分析有没有这些停用词并不能完全代表句子生成的好坏。</p>
+</li>
+</ol>
+<h1 id="DGCN"><a href="#DGCN" class="headerlink" title="DGCN"></a>DGCN</h1><h1 id="MAP"><a href="#MAP" class="headerlink" title="MAP"></a>MAP</h1><h1 id="MRR"><a href="#MRR" class="headerlink" title="MRR"></a>MRR</h1>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/12/04/nlp-metrics/" data-id="cjpy1qf6s00098zaj2eb1pgoq" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/12/04/nlp-metrics/" data-id="cjq23jhl1000i0vaj57inavkx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/">algorithm</a></li></ul>
