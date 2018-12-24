@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Sakya Personal Blog">
 <meta property="og:description" content="这篇博客主要是汇总NLP任务中经常涉及到的一些评价指标的含义和计算方法，评价指标是否科学可行直接影响着这个领域能否进入良性循环的研究方向。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-12-24T09:05:27.954Z">
+<meta property="og:updated_time" content="2018-12-24T09:10:45.205Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NLP任务中常用的评价指标汇总">
 <meta name="twitter:description" content="这篇博客主要是汇总NLP任务中经常涉及到的一些评价指标的含义和计算方法，评价指标是否科学可行直接影响着这个领域能否进入良性循环的研究方向。">
@@ -92,7 +92,7 @@
 <p><strong>Modified n-gram precision</strong><br>简单的：precision=match words(unigrams) in any reference / total words in Candidate<br>But：MT系统能够过度的生成一些看事合理reasonable但是实际不合适的Word，而按照上述方法往往会得到高准确率high-precision，例如：<br>Candidate: the the the the the the the.<br>Reference 1: The cat is on the mat.<br>Reference 2: There is a cat on the mat.<br>按上述简单方法计算准确率是7/7<br>因此，需要modified unigram precision（思路：在reference中剔除已经匹配过的word），按如下步骤<br>A）计算word在任何一个参考翻译结果中出现的最大次数Max_Ref_Count<br>B）修正分子：clipped Count = min(Count, Max_Ref_Count)<br>C）计算modified unigram precision = Sum（clipped Count）/ total candidate words<br>于是：the modified unigram precision is 2/7<br>modified n-gram precision捕获了2方面指标：adequacy 和 fluency<br>adequacy：候选与参考中相同的words（1-grams）<br>fluency：the longer n-gram matches</p>
 <p>所以最终的公式如下，其中c表示the length of the candidate translation，r be the effective reference corpus length。</p>
 <script type="math/tex; mode=display">
-BLEU = BP \cdot exp \left( \sum_{n=1}^{N}w_nlogPp_n \right)</script><script type="math/tex; mode=display">
+BLEU = BP \cdot exp \left( \sum_{n=1}^{N}w_nlog p_n \right)</script><script type="math/tex; mode=display">
 BP=\left\{
 \begin{aligned}
 1 \quad & if\ c > r \\
@@ -101,7 +101,35 @@ e^{(1-r/c)} \quad & if\ c \leq r
 \right.</script><script type="math/tex; mode=display">
 p_n=\frac{\sum_{C \in {Candidates}}\sum_{n-gram \in C} Count_{clip}(n-gram)}{\sum_{C' \in {Candidates}}\sum_{n-gram' \in C'} Count(n-gram')}</script><script type="math/tex; mode=display">
 \log BLEU = min(1-\frac{r}{c},0)+\sum_{n=1}^{N}w_nlogPp_n</script><p>BLEU打分的取值范围[0,1]。除非翻译结果与某个reference结果完全一致，否则很难获得1分，因此，往往人工翻译结果也不一定是1分。<br>值得注意的是：每个源语句对应的reference结果越多，BLEU的得分也会越高。因此在比较不同翻译结果好坏时，要确保在相同的reference translation个数的语料集合上。</p>
-<h1 id="ROUGE"><a href="#ROUGE" class="headerlink" title="ROUGE"></a>ROUGE</h1><p>ROUGE(Recall-Oriented Understudy for Gisting Evaluation)，提出于ACL 2004(<a href="https://www.aclweb.org/anthology/W/W04/W04-1013.pdf" target="_blank" rel="noopener">https://www.aclweb.org/anthology/W/W04/W04-1013.pdf</a>)<br>是文本摘要中最常用的评价方法。ROUGE受到了机器翻译自动评价方法BLEU的启发，不同之处在于，采用召回率来作为指标。基本思想是将模型生成的摘要与参考摘要的n元组贡献统计量作为评判依据。<br>ROUGE包括以下四种，ROUGE-N,ROUGE-L,ROUGE-W,ROUGE-S:<br>| Metric      | Description |<br>| —————- | —————- |<br>|ROUGE-N|基于N-gram共现性统计|<br>|ROUGE-L|基于最长共有子句共现性精确度和召回率Fmeasure统计|<br>|ROUGE-W|带权重的最长公有子句共现性精确度和召回率Fmeasure统计|<br>|ROUGE-S|不连续二元组共线性精确度和召回率Fmeasure统计|</p>
+<h1 id="ROUGE"><a href="#ROUGE" class="headerlink" title="ROUGE"></a>ROUGE</h1><p>ROUGE(Recall-Oriented Understudy for Gisting Evaluation)，提出于ACL 2004(<a href="https://www.aclweb.org/anthology/W/W04/W04-1013.pdf" target="_blank" rel="noopener">https://www.aclweb.org/anthology/W/W04/W04-1013.pdf</a>)<br>是文本摘要中最常用的评价方法。ROUGE受到了机器翻译自动评价方法BLEU的启发，不同之处在于，采用召回率来作为指标。基本思想是将模型生成的摘要与参考摘要的n元组贡献统计量作为评判依据。<br>ROUGE包括以下四种，ROUGE-N,ROUGE-L,ROUGE-W,ROUGE-S:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ROUGE-N</td>
+<td>基于N-gram共现性统计</td>
+</tr>
+<tr>
+<td>ROUGE-L</td>
+<td>基于最长共有子句共现性精确度和召回率Fmeasure统计</td>
+</tr>
+<tr>
+<td>ROUGE-W</td>
+<td>带权重的最长公有子句共现性精确度和召回率Fmeasure统计</td>
+</tr>
+<tr>
+<td>ROUGE-S</td>
+<td>不连续二元组共线性精确度和召回率Fmeasure统计</td>
+</tr>
+</tbody>
+</table>
+</div>
 <h3 id="ROUGE-N-N-gram-Co-Occurrence-Statistics"><a href="#ROUGE-N-N-gram-Co-Occurrence-Statistics" class="headerlink" title="ROUGE-N:: N-gram Co-Occurrence Statistics"></a>ROUGE-N:: N-gram Co-Occurrence Statistics</h3><p>Formally, ROUGE-N is an n-gram recall between a candidate summary and a set of reference summaries.ROUGE-N is computed as follows:</p>
 <script type="math/tex; mode=display">
 ROUGE-N = \frac{\sum_{S \in ReferemceSummaries}\sum_{gram_n \in S}Count_{match}(gram_n)}{\sum_{S \in ReferemceSummaries}\sum_{gram_n \in S}Count(gram_n)}</script><p><strong>优点</strong>：直观，简洁，能反映词序。<br><strong>缺点</strong>：区分度不高，且当N&gt;3时，ROUGE-N值通常很小<br><strong>应用场景</strong>：ROUGE-1：短摘要评估，多文档摘要（去停用词条件）;<br>ROUGE-2: 单文档摘要，多文档摘要（去停用词条件）;</p>
@@ -119,7 +147,7 @@ R_{skip2} = \frac{SKIP2(X,Y)}{C(m,2)}</script><script type="math/tex; mode=displ
 P_{skip2} = \frac{SKIP2(X,Y)}{C(n,2)}</script><script type="math/tex; mode=display">
 F_{skip2} = \frac{(1+\beta^2)R_{skip2}P_{skip2}}{R_{skip2}+\beta^2P_{skip2}}</script><p>其中，SKIP2表示X和Y之间匹配的skip-bigram的个数，C是combination function。<br><strong>优点</strong>：考虑了所有按词序排列的词对，比n-gram模型更深入反映句子级词序。<br><strong>缺点</strong>：若不设定最大跳跃词数会出现很多无意义词对。若设定最大跳跃词数，需要指定最大跳跃词数的值。<br><strong>应用场景</strong>：单文档摘要；ROUGE-S4，ROUGE-S9: 多文档摘要（去停用词条件)。</p>
 <p>总的来说，ROUGE有如下优势：参考译文越多，则证明带评测译文的ROUGE与人类评测越相关，同理带评测译文越多，相关性也越高。单文件任务比多文件任务的关联性更大。</p>
-<h1 id="Meteor"><a href="#Meteor" class="headerlink" title="Meteor"></a>Meteor</h1><p>Meteor(Metric for Evaluation of Translation with Explicit ORdering)在ACL 2014 workshop上公布，是基于BLEU进行了一些改进，加入了生成响应和真实响应之间的对其关系。使用WordNet计算特定的序列匹配，同义词，词根和词缀，释义之间的匹配关系，改善了BLEU的效果，使其跟人工判别共更强的相关性。同样也是使用F-measure的计算方法，如下图所示，具体可以参考论文《Meteor universal: Language specific translation evaluation for any target language》<br>计算METEOR需要预先给定一组校准(alignment)m，而这一校准基于WordNet的同义词库，通过最小化对应语句中连续有序的块(chunks)ch来得出<br>则METEOR计算为对应最佳候选译文和参考译文之间的准确率和召回率的调和平均： </p>
+<h1 id="Meteor"><a href="#Meteor" class="headerlink" title="Meteor"></a>Meteor</h1><p>Meteor(Metric for Evaluation of Translation with Explicit ORdering)在ACL 2014 workshop上公布，是基于BLEU进行了一些改进，加入了生成响应和真实响应之间的对其关系。使用WordNet计算特定的序列匹配，同义词，词根和词缀，释义之间的匹配关系，改善了BLEU的效果，使其跟人工判别共更强的相关性。同样也是使用F-measure的计算方法，如下图所示，具体可以参考论文《<a href="https://www.cs.cmu.edu/~alavie/METEOR/pdf/meteor-1.5.pdf" target="_blank" rel="noopener">Meteor universal: Language specific translation evaluation for any target language</a>》<br>计算METEOR需要预先给定一组校准(alignment)m，而这一校准基于WordNet的同义词库，通过最小化对应语句中连续有序的块(chunks)ch来得出<br>则METEOR计算为对应最佳候选译文和参考译文之间的准确率和召回率的调和平均： </p>
 <script type="math/tex; mode=display">
 Pen=\gamma\left(\frac{ch}{m} \right)^\theta</script><script type="math/tex; mode=display">
 F_{mean}=\frac{P_mR_m}{\alpha P_m+(1-\alpha)R_m}</script><script type="math/tex; mode=display">
@@ -143,7 +171,7 @@ PP(S)=2^{-\frac{1}{N}\sum \log (P(w_i))}</script><p><strong>Perplexity的影响�
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/12/04/nlp-metrics/" data-id="cjq23jhl1000i0vaj57inavkx" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/12/04/nlp-metrics/" data-id="cjq23q7f2000j2vajzbhyx451" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/">algorithm</a></li></ul>
