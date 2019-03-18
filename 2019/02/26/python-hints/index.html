@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>python开发备忘 | Sakya Personal Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="这篇blog记录一些平时工作中使用python遇到的一些易混淆概念或者易忘的用法，主要用来备忘。不定期更新。">
+<meta name="keywords" content="practice">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python开发备忘">
+<meta property="og:url" content="http://yoursite.com/2019/02/26/python-hints/index.html">
+<meta property="og:site_name" content="Sakya Personal Blog">
+<meta property="og:description" content="这篇blog记录一些平时工作中使用python遇到的一些易混淆概念或者易忘的用法，主要用来备忘。不定期更新。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-02-28T07:29:34.637Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python开发备忘">
+<meta name="twitter:description" content="这篇blog记录一些平时工作中使用python遇到的一些易混淆概念或者易忘的用法，主要用来备忘。不定期更新。">
+  
+    <link rel="alternate" href="/atom.xml" title="Sakya Personal Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Sakya Personal Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-python-hints" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/02/26/python-hints/" class="article-date">
+  <time datetime="2019-02-26T05:00:41.000Z" itemprop="datePublished">2019-02-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      python开发备忘
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这篇blog记录一些平时工作中使用python遇到的一些易混淆概念或者易忘的用法，主要用来备忘。不定期更新。</p>
+<a id="more"></a>
+<h2 id="Python中的赋值-复制-、浅拷贝、深拷贝之间的区别"><a href="#Python中的赋值-复制-、浅拷贝、深拷贝之间的区别" class="headerlink" title="Python中的赋值(复制)、浅拷贝、深拷贝之间的区别"></a>Python中的赋值(复制)、浅拷贝、深拷贝之间的区别</h2><p>1.赋值: 只是复制了新对象的引用，不会开辟新的内存空间。<br>2.浅拷贝: 创建新对象，其内容是原对象的引用。<br>    浅拷贝有三种形式：切片操作，工厂函数，copy模块中的copy函数。<br>    如： lst = [1,2,3,[4,5]]<br>    切片操作：lst1 = lst[:] 或者 lst1 = [each for each in lst]<br>    工厂函数：lst1 = list(lst)<br>    copy函数：lst1 = copy.copy(lst)</p>
+<pre><code>浅拷贝之所以称为浅拷贝，是它仅仅只拷贝了一层，在lst中有一个嵌套的list[4,5]，如果我们修改了它，情况就不一样了。
+</code></pre><p>3.深拷贝：只有一种形式，copy模块中的deepcopy函数。<br>    和浅拷贝对应，深拷贝拷贝了对象的所有元素，包括多层嵌套的元素。<br>    深拷贝出来的对象是一个全新的对象，不再与原来的对象有任何关联。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import copy</span><br><span class="line">&gt;&gt;&gt; a = [1,2,3,4,[&apos;a&apos;,&apos;b&apos;]] #定义一个列表a</span><br><span class="line">&gt;&gt;&gt; b = a #赋值</span><br><span class="line">&gt;&gt;&gt; c = copy.copy(a) #浅拷贝</span><br><span class="line">&gt;&gt;&gt; d = copy.deepcopy(a) #深拷贝</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; a.append(5)</span><br><span class="line">&gt;&gt;&gt; print(a)</span><br><span class="line">[1, 2, 3, 4, [&apos;a&apos;, &apos;b&apos;], 5] #a添加一个元素5</span><br><span class="line">&gt;&gt;&gt; print(b) </span><br><span class="line">[1, 2, 3, 4, [&apos;a&apos;, &apos;b&apos;], 5] #b跟着添加一个元素5 </span><br><span class="line">&gt;&gt;&gt; print(c)</span><br><span class="line">[1, 2, 3, 4, [&apos;a&apos;, &apos;b&apos;]] #c保持不变</span><br><span class="line">&gt;&gt;&gt; print(d)</span><br><span class="line">[1, 2, 3, 4, [&apos;a&apos;, &apos;b&apos;]] #d保持不变</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; a[4].append(&apos;c&apos;) </span><br><span class="line">&gt;&gt;&gt; print(a)</span><br><span class="line">[1, 2, 3, 4, [&apos;a&apos;, &apos;b&apos;, &apos;c&apos;], 5] #a中的list(即a[4])添加一个元素c</span><br><span class="line">&gt;&gt;&gt; print(b)</span><br><span class="line">[1, 2, 3, 4, [&apos;a&apos;, &apos;b&apos;, &apos;c&apos;], 5] #b跟着添加一个元素c</span><br><span class="line">&gt;&gt;&gt; print(c)</span><br><span class="line">[1, 2, 3, 4, [&apos;a&apos;, &apos;b&apos;, &apos;c&apos;]] #c跟着添加一个元素c</span><br><span class="line">&gt;&gt;&gt; print(d)</span><br><span class="line">[1, 2, 3, 4, [&apos;a&apos;, &apos;b&apos;]] #d保持不变</span><br><span class="line"></span><br><span class="line">#说明如下：</span><br><span class="line">#1.外层添加元素时， 浅拷贝c不会随原列表a变化而变化；内层list添加元素时，浅拷贝c才会变化。</span><br><span class="line">#2.无论原列表a如何变化，深拷贝d都保持不变。</span><br><span class="line">#3.赋值对象随着原列表一起变化</span><br></pre></td></tr></table></figure>
+<p>4.可以参考这篇博客中的图更便于理解：<a href="http://www.runoob.com/w3cnote/python-understanding-dict-copy-shallow-or-deep.html" target="_blank" rel="noopener">http://www.runoob.com/w3cnote/python-understanding-dict-copy-shallow-or-deep.html</a></p>
+<h2 id="Python中的init-和call-函数"><a href="#Python中的init-和call-函数" class="headerlink" title="Python中的init()和call()函数"></a>Python中的<strong>init</strong>()和<strong>call</strong>()函数</h2><p>在Python的class中有一些函数往往具有特殊的意义。<strong>init</strong>()和<strong>call</strong>()就是class很有用的两类特殊的函数。</p>
+<p><strong><strong>init</strong>()</strong><br>在Python中，<strong>init</strong>()函数的意义等同于类的构造器（同理，<strong>del</strong>()等同于类的析构函数）。因此，<strong>init</strong>()方法的作用是创建一个类的实例。</p>
+<p><strong><strong>call</strong>()</strong></p>
+<p>Python中的函数是一级对象。这意味着Python中的函数的引用可以作为输入传递到其他的函数/方法中，并在其中被执行。<br>而Python中类的实例（对象）可以被当做函数对待。也就是说，我们可以将它们作为输入传递到其他的函数/方法中并调用他们，正如我们调用一个正常的函数那样。而类中<strong>call</strong>()函数的意义正在于此。为了将一个类实例当做函数调用，我们需要在类中实现<strong>call</strong>()方法。也就是我们要在类中实现如下方法：def <strong>call</strong>(self, *args)。这个方法接受一定数量的变量作为输入。<br>假设x是X类的一个实例。那么调用x.<strong>call</strong>(1,2)等同于调用x(1,2)。这个实例本身在这里相当于一个函数。</p>
+<p><strong>总结</strong><br>那么，<strong>init</strong>()和<strong>call</strong>()的区别如下： </p>
+<ol>
+<li><strong>init</strong>()的作用是初始化某个类的一个实例。 </li>
+<li><strong>call</strong>()的作用是使实例能够像函数一样被调用，同时不影响实例本身的生命周期（<strong>call</strong>()不影响一个实例的构造和析构）。但是<strong>call</strong>()可以用来改变实例的内部成员的值。</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, a, b, range)</span>:</span></span><br><span class="line">        self.a = a</span><br><span class="line">        self.b = b</span><br><span class="line">        self.range = range</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__call__</span><span class="params">(self, a, b)</span>:</span></span><br><span class="line">        self.a = a</span><br><span class="line">        self.b = b</span><br><span class="line">        print(<span class="string">'__call__ with （&#123;&#125;, &#123;&#125;）'</span>.format(self.a, self.b))</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__del__</span><span class="params">(self, a, b, range)</span>:</span></span><br><span class="line">        <span class="keyword">del</span> self.a</span><br><span class="line">        <span class="keyword">del</span> self.b</span><br><span class="line">        <span class="keyword">del</span> self.range</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; xInstance = X(1, 2, 3)</span><br><span class="line">&gt;&gt;&gt; xInstance(1,2)</span><br><span class="line">__call__ with (1, 2)</span><br></pre></td></tr></table></figure>
+<h2 id="classmethod和-staticmethod"><a href="#classmethod和-staticmethod" class="headerlink" title="@classmethod和@staticmethod"></a>@classmethod和@staticmethod</h2><p>classmethod方法需要cls这个参数，表示这个类，而staticmethod不需要。</p>
+<p>参考：<a href="https://stackoverflow.com/questions/12179271/meaning-of-classmethod-and-staticmethod-for-beginner" target="_blank" rel="noopener">https://stackoverflow.com/questions/12179271/meaning-of-classmethod-and-staticmethod-for-beginner</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Date</span><span class="params">(object)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, day=<span class="number">0</span>, month=<span class="number">0</span>, year=<span class="number">0</span>)</span>:</span></span><br><span class="line">        self.day = day</span><br><span class="line">        self.month = month</span><br><span class="line">        self.year = year</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">from_string</span><span class="params">(cls, date_as_string)</span>:</span></span><br><span class="line">        day, month, year = map(int, date_as_string.split(<span class="string">'-'</span>))</span><br><span class="line">        date1 = cls(day, month, year)</span><br><span class="line">        <span class="keyword">return</span> date1</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">is_date_valid</span><span class="params">(date_as_string)</span>:</span></span><br><span class="line">        day, month, year = map(int, date_as_string.split(<span class="string">'-'</span>))</span><br><span class="line">        <span class="keyword">return</span> day &lt;= <span class="number">31</span> <span class="keyword">and</span> month &lt;= <span class="number">12</span> <span class="keyword">and</span> year &lt;= <span class="number">3999</span></span><br><span class="line"></span><br><span class="line">date2 = Date.from_string(<span class="string">'11-09-2012'</span>)</span><br><span class="line">is_date = Date.is_date_valid(<span class="string">'11-09-2012'</span>)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/02/26/python-hints/" data-id="cjte0r52j000a4fajyymqlzaa" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/practice/">practice</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/03/18/linux-hints/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          linux开发备忘
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/01/15/text-processing/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">中文文本数据处理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code/">code</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/paper/">paper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/practice/">practice</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/share/">share</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/algorithm/" style="font-size: 15px;">algorithm</a> <a href="/tags/code/" style="font-size: 10px;">code</a> <a href="/tags/paper/" style="font-size: 15px;">paper</a> <a href="/tags/practice/" style="font-size: 20px;">practice</a> <a href="/tags/share/" style="font-size: 15px;">share</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/03/18/linux-hints/">linux开发备忘</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/26/python-hints/">python开发备忘</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/15/text-processing/">中文文本数据处理</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/15/doc-classification-review/">文本分类算法总结</a>
+          </li>
+        
+          <li>
+            <a href="/2018/12/28/tf-idf-based-IR/">基于TF-IDF的文本检索实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<!--script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+</body>
+</html>
