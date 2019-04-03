@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Sakya Personal Blog">
 <meta property="og:description" content="这篇blog记录一些平时工作中使用python遇到的一些易混淆概念或者易忘的用法，主要用来备忘。不定期更新。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-02T11:33:49.339Z">
+<meta property="og:updated_time" content="2019-04-03T03:42:28.041Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="python开发备忘">
 <meta name="twitter:description" content="这篇blog记录一些平时工作中使用python遇到的一些易混淆概念或者易忘的用法，主要用来备忘。不定期更新。">
@@ -114,10 +114,25 @@
 <li>3.编写Python代码(不建议在<strong>init</strong>中写python模块，可以在包中在创建另外的模块来写，尽量保证<strong>init</strong>.py简单）</li>
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">__all__ = [<span class="string">"Pack1Class"</span>,<span class="string">"Pack1Class1"</span>,<span class="string">"Init_AA"</span>]</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Init_AA</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,name)</span>:</span></span><br><span class="line">        self.name = name</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">Greeting</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">"Hello "</span>,self.name)</span><br></pre></td></tr></table></figure>
+<h2 id="python中带-号的参数，一个星号，两个星号"><a href="#python中带-号的参数，一个星号，两个星号" class="headerlink" title="python中带*号的参数，一个星号，两个星号"></a>python中带*号的参数，一个星号，两个星号</h2><ul>
+<li><p>1.带一个星号（*）参数的函数传入的参数存储为一个元组（tuple）</p>
+</li>
+<li><p>2.带两个星号（*）参数的函数传入的参数则存储为一个字典（dict），并且再调用是采取a=1,b=2,c=3的形式</p>
+</li>
+<li><p>3.传入的参数个数不定，所以当与普通参数一同使用时，必须把带星号的参数放在最后。</p>
+</li>
+<li><p>4.函数定义的时候，再函数的参数前面加星号，将传递进来的多个参数转化为一个对象，一个星号转换成元组，两个星号转换成字典，相当于把这些参数收集起来</p>
+</li>
+<li><p>5.参数前加一个星号，将传递进来的参数放在同一个元组中，该参数的返回值是一个元组</p>
+</li>
+<li><p>6.参数前两个星号，将传递进来的参数放到同一个字典中，该参数返回值为一个字典</p>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">function_with_one_star(*d):</span><br><span class="line">    print(d, type(d))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">function_with_two_stars</span><span class="params">(**d)</span>:</span></span><br><span class="line">    print(d, type(d))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 上面定义了两个函数，分别用了带一个星号和两个星号的参数，它们是什么意思，运行下面的代码：</span></span><br><span class="line">function_with_one_star(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">function_with_two_stars(a = <span class="number">1</span>, b = <span class="number">2</span>, c = <span class="number">3</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 结果如下</span></span><br><span class="line">(1, 2, 3) &lt;&lt;/span&gt;class 'tuple'&gt;</span><br><span class="line">&#123;'a': 1, 'c': 3, 'b': 2&#125; &lt;&lt;/span&gt;class 'dict'&gt;</span><br></pre></td></tr></table></figure>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/02/26/python-hints/" data-id="cjtzpfp8w000br9aj99cn2voi" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/02/26/python-hints/" data-id="cju0o1o5i0008xjajefpvj2xi" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/practice/">practice</a></li></ul>
