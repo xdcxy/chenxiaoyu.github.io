@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>37个可能导致神经网络不work的原因 | Sakya Personal Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="有的时候一个神经网络已经训练了好几个小时，一切都看起来很正常：梯度在浮动，loss在稳定下降。但是当进入到predict阶段时，出现各种0等无意义的结果，或者仅仅是对所有输出做了平均，或者是很低的精度。一个网络成功与否是由很多因素决定的，下面就列出了在debug模型的时候可以考虑到的点。">
+<meta name="keywords" content="algorithm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="37个可能导致神经网络不work的原因">
+<meta property="og:url" content="http://yoursite.com/2019/05/30/network-training/index.html">
+<meta property="og:site_name" content="Sakya Personal Blog">
+<meta property="og:description" content="有的时候一个神经网络已经训练了好几个小时，一切都看起来很正常：梯度在浮动，loss在稳定下降。但是当进入到predict阶段时，出现各种0等无意义的结果，或者仅仅是对所有输出做了平均，或者是很低的精度。一个网络成功与否是由很多因素决定的，下面就列出了在debug模型的时候可以考虑到的点。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-06-03T12:48:44.286Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="37个可能导致神经网络不work的原因">
+<meta name="twitter:description" content="有的时候一个神经网络已经训练了好几个小时，一切都看起来很正常：梯度在浮动，loss在稳定下降。但是当进入到predict阶段时，出现各种0等无意义的结果，或者仅仅是对所有输出做了平均，或者是很低的精度。一个网络成功与否是由很多因素决定的，下面就列出了在debug模型的时候可以考虑到的点。">
+  
+    <link rel="alternate" href="/atom.xml" title="Sakya Personal Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Sakya Personal Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-network-training" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/05/30/network-training/" class="article-date">
+  <time datetime="2019-05-30T13:30:52.000Z" itemprop="datePublished">2019-05-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      37个可能导致神经网络不work的原因
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>有的时候一个神经网络已经训练了好几个小时，一切都看起来很正常：梯度在浮动，loss在稳定下降。但是当进入到predict阶段时，出现各种0等无意义的结果，或者仅仅是对所有输出做了平均，或者是很低的精度。一个网络成功与否是由很多因素决定的，下面就列出了在debug模型的时候可以考虑到的点。<br><a id="more"></a></p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li>1.有关于dataset</li>
+<li>2.数据归一化/增强</li>
+<li>3.实现问题</li>
+<li>4.训练问题</li>
+</ul>
+<h2 id="有关于dataset"><a href="#有关于dataset" class="headerlink" title="有关于dataset"></a>有关于dataset</h2><ul>
+<li>1.检查输入数据<br>例如，没有弄错图谱的长和宽。也有的时候数据都是0，或者同样的batch一遍又一遍的算。</li>
+<li>2.尝试随机输入<br>用随机数取代原来的输入数据，来观察错误是否还是同样出现。如果是的话，那么就是网络的问题，在某些point把数据都转成了garbage。这时就需要一层一层，一个op一个op地排查问题。</li>
+<li>3.检查数据加载<br>也是数据是OK的，但是代码将数据传入网络的过程中可能出错。这就需要在网络的第一层任何操作开始前打印数据检查一下。</li>
+<li>4.确保输入数据和输出数据的关联性<br>检查数据样本和label是否匹配。确保随机打算输入可以得到同样的输出label</li>
+<li>5.输入和输出的关系是否太随机？<br>也许输入和输出关系的非随机部分远远小于随机部分(例如有人认为股票就是如此)。这种问题没有统一检测的方法。</li>
+<li>6.数据集的噪声是否过多<br>人工抽样检测一部分数据</li>
+<li>7.shuffle数据集<br>如果一个数据集不是shuffle过的，label有一定的排列次序。这对于网络学习是非常负面的</li>
+<li>8.减少类的不平衡性<br>需要balance loss function或者尝试其他<a href="https://machinelearningmastery.com/tactics-to-combat-imbalanced-classes-in-your-machine-learning-dataset/" target="_blank" rel="noopener">类别不平衡的处理办法</a>。<ul>
+<li>collect more data</li>
+<li>change perforamce matric</li>
+<li>resampling dataset</li>
+<li>generate synthetic data</li>
+<li>try different algorithm</li>
+<li>try penalized models</li>
+<li>try a different perspective</li>
+<li>try getting creative</li>
+</ul>
+</li>
+<li>9.是否有足够的训练数据<br>如果从头开始训练网络而不是fine-tune,这需要大量数据。对于图像分类任务，每个class至少要1000张图片。</li>
+<li>10.确保batches里面不是只有一种label<br>这种经常出现在label有排列次序的数据集中，just shuffle</li>
+<li>11.减少batch size<br>这篇paper<on large-batch="" training="" for="" deep="" learning:="" generalization="" gap="" and="" sharp="" minima="">说一个非常大的batch会降低模型的泛化能力。</on></li>
+</ul>
+<ul>
+<li>附加1.用标准数据集<br>新的网络模型先在标注数据集上跑一遍看是否work</li>
+</ul>
+<h2 id="数据归一化-增强"><a href="#数据归一化-增强" class="headerlink" title="数据归一化/增强"></a>数据归一化/增强</h2><ul>
+<li>12.特征的Standardize<br>是否将input标准化成了0均值，1标准差</li>
+<li>13.是否做了过多的数据增强<br>数据增加起到类似regularization的作用。融合太多并且和其他正则化结合起来(例如L2，dropout等)会导致模型的欠拟合</li>
+<li>14.检查预训练模型的预处理<br>如果使用了预训练的模型，确保现在处理的数据和之前训练预训练模型的数据是同样的标准化和预处理。比如一个图像的像素是范围是[0,1],[-1,1]还是[0,255]?</li>
+<li>15.检查训练/验证/测试数据集的预处理方式<br>任何预处理的统计(如数据均值)都应该只能从训练数据中获得，并应用在验证和测试集上。比如以下做法是错误的：整个数据集计算所有图像的均值并对每个图像减去这个均值，然后再切分训练/验证/测试集。</li>
+</ul>
+<h2 id="实现问题"><a href="#实现问题" class="headerlink" title="实现问题"></a>实现问题</h2><ul>
+<li>16.尝试先实现简单版本的问题<br>这可以帮助找到问题所在。例如识别目前类别和对应的动作，可以先限定只predict object class</li>
+<li>17.寻找正确的loss “at chane”<br>初始化小部分参数，没有正则化项。比如有10个类别，at chance表示有10%的可能得到正确的类别。Softmax损失是概率的负对数：-ln(0.1)=2.302<br>然后，increase the regularization strength which should increase the loss</li>
+<li>18.检查损失函数<br>如果是自己实现的损失函数，检查是否有bug并增加单元测试。</li>
+<li>19.确认loss的输入<br>如果损失函数是框架提供的，确认参数传递的正确性。例如，在pytorch中，NLLLoss和CrossEntropyLoss就容易搞错，前者需要softmax作为输入后者不用。</li>
+<li>20.调整loss权重<br>如果损失是由多个小的损失函数组成的，确保their magnitude relative to each is correct。这包括测试不同的组合权重。</li>
+<li>21.尝试其他评价指标<br>有时候当前的损失函数不是这个网络最好的，尝试其他的。</li>
+<li>22.测试custom layer<br>如果有网络层是自己实现，需要确认是否是符合预期的</li>
+<li>23.检查”forzen” layers和参数<br>检查是否不小心让某些可学的层或参数停止更新</li>
+<li>24.增加网络size<br>也许当前网络不足以capture target function。尝试在全连接层增加更多的网络层或者更多的hidden units</li>
+<li>25.检查hidden dimension errors<br>如果输入形如(k, H, W) = (64, 64, 64) ，这很容易就漏掉维度上面的错误。使用一些奇怪维度的数据并检查如何在网络中propagate的</li>
+<li>26.检查梯度<br>如果梯度下降是自己实现的，那么检查backpropagation是否符合预期。</li>
+</ul>
+<h2 id="训练问题"><a href="#训练问题" class="headerlink" title="训练问题"></a>训练问题</h2><ul>
+<li>27.解决一个小数据集<br>过拟合一个小数据集并确保work。训练1，2个样本看网络是否能够区分他们，然后在加入更多数据。</li>
+<li>28.检查权重的初始化<br>如果不确定，使用<a href="http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf" target="_blank" rel="noopener">Xavier</a>或<a href="http://www.cv-foundation.org/openaccess/content_iccv_2015/papers/He_Delving_Deep_into_ICCV_2015_paper.pdf" target="_blank" rel="noopener">He</a>初始话方法。同样，初始话也会导致陷入bad local minimum，所以尝试多种初始化方法看是否有效。</li>
+<li>29.改变超参数<br>也许是使用了不好的超参数组合。如果可行，尝试<a href="http://scikit-learn.org/stable/modules/grid_search.html" target="_blank" rel="noopener">grid search</a></li>
+<li>30.减少正则化项<br>太多正则化会导致模型欠拟合。减少一些正则化如：dropout,batch normalization,weight/bias L2 regularization等等。去掉underfit first。首先先过拟合地训练数据，然后再处理过拟合的问题。</li>
+<li>31.给足够的时间<br>也许需要更多的时间训练一个模型才能使得预测更meaningful。如果loss稳定下降，那就继续训练。</li>
+<li>32.从训练切换到测试模式<br>一些框架有Batch Norm，Dropout还有其他一些训练和测试模式下行为不一样的层。切换到合适的模式有助于网络预测更合理。</li>
+<li>33.训练过程可视化<ul>
+<li>监控激活值，权重和每一层的更新，确保magnitudes是匹配的。例如，the magnitude of the updates to the parameters (weights and biases) should be 1-e3</li>
+<li>Tensorboard and Crayon，同样打印weights/biases/activations</li>
+<li>特别注意激活均值远大于0的层，尝试Batch Norm或ELUs</li>
+<li><a href="https://deeplearning4j.org/visualization#usingui" target="_blank" rel="noopener">Deeplearning4j</a>指出weights和biases的直方图应该是这样：“For weights, these histograms should have an approximately Gaussian (normal) distribution, after some time. For biases, these histograms will generally start at 0, and will usually end up being approximately Gaussian (One exception to this is for LSTM). Keep an eye out for parameters that are diverging to +/- infinity. Keep an eye out for biases that become very large. This can sometimes occur in the output layer for classification if the distribution of classes is very imbalanced.”</li>
+<li>检查layer的更新，应该服从高斯分布</li>
+</ul>
+</li>
+<li>34.尝试不同的optimizer<br>合适的优化函数有助于用最短的时间得到训练结果。没有特殊指定的优化函数，一般用Adam或者普通的momentum SGD</li>
+<li>35.梯度爆炸或消失<ul>
+<li>有梯度爆炸现象，尝试gradient clipping</li>
+<li>检查layer activations。“A good standard deviation for the activations is on the order of 0.5 to 2.0. Significantly outside of this range may indicate vanishing or exploding activations.”</li>
+</ul>
+</li>
+<li>36.提高或降低学习率<br>尝试现有的学习率乘上0.1到10</li>
+<li>37.解决NANs<br>训练RNN网络是，NAN是一个严重的问题。以下方法可以帮助解决：<ul>
+<li>减少学习率，特别是在100轮迭代是就出现NAN</li>
+<li>NAN可能是由于除以0 或者对负数或零取自然对数导致的</li>
+<li>如何解决NAN也可以看：<a href="https://www.jianshu.com/p/ba2ac29810e6" target="_blank" rel="noopener">https://www.jianshu.com/p/ba2ac29810e6</a></li>
+<li>一层一层地评估NAN出现的位置</li>
+</ul>
+</li>
+</ul>
+<p>参考自:<a href="https://blog.slavv.com/37-reasons-why-your-neural-network-is-not-working-4020854bd607" target="_blank" rel="noopener">https://blog.slavv.com/37-reasons-why-your-neural-network-is-not-working-4020854bd607</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/05/30/network-training/" data-id="cjwgdeqqs000qd1ajqa2yldz2" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/">algorithm</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/03/18/linux-hints/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">linux开发备忘</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/code/">code</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/paper/">paper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/practice/">practice</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/share/">share</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/algorithm/" style="font-size: 16.67px;">algorithm</a> <a href="/tags/code/" style="font-size: 10px;">code</a> <a href="/tags/paper/" style="font-size: 13.33px;">paper</a> <a href="/tags/practice/" style="font-size: 20px;">practice</a> <a href="/tags/share/" style="font-size: 13.33px;">share</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/05/30/network-training/">37个可能导致神经网络不work的原因</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/18/linux-hints/">linux开发备忘</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/26/python-hints/">python开发备忘</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/15/text-processing/">中文文本数据处理</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/15/doc-classification-review/">文本分类算法总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
